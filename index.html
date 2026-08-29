@@ -82,33 +82,37 @@
               <span id="mood-value">Neutral</span>
             </p>
           </div>
-          <label>
+          <div class="container-destruction-items">
+            <label class="container-destruction">
+              <input type="checkbox" name="self-destruction" id="destruction" />
+              <p>Autodestruir nota?</p>
+            </label>
+
             <input
-              type="checkbox"
-              name="self-destruction"
-              id="destruction"
-            />Autodestruir esta nota?
-          </label>
+              type="number"
+              name="time"
+              id="time-self-destruction"
+              placeholder="Horas"
+              disabled
+            />
+          </div>
 
-          <input
-            type="number"
-            name="time"
-            id="time-self-destruction"
-            placeholder="Horas"
-            disabled
-          />
+          <div class="container-hourglass">
+            <label class="container-check">
+              <input type="checkbox" name="capsule" id="check-capsule" />
+              <p>Cápsula del tiempo</p>
+            </label>
+            <input
+              type="datetime"
+              name="unlock-date"
+              id="unlock-date"
+              disabled
+            />
+          </div>
 
-          <label>
-            <input type="checkbox" name="capsule" id="check-capsule" />
-            <img src="./assets/ring.png" alt="bell-capsule" /> Cápsula del
-            tiempo
-          </label>
-
-          <input type="datetime-local" name="unlock-date" disabled />
-
-          <button type="submit">
-            <img src="./assets/plus.png" alt="plus-add" /> Guardar nota
-          </button>
+          <div class="container-save-note">
+            <button type="submit" id="btn-save-note">Guardar nota</button>
+          </div>
         </form>
       </section>
 

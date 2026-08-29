@@ -3,7 +3,7 @@
   --unripe: #aab026;
   --mystic-melon: #f6f1bc;
   --gataloupe: #fdcb7b;
-  --kumqat: #eea64b;
+  --kumqat: #eea54b;
   --oragen-zest: #d9641f;
   --cream: #e5deca;
 
@@ -16,7 +16,6 @@
   --btn-sand: #ead8b0;
 }
 body {
-  background-color: var(--cream);
   margin: 0;
   height: 100%;
   width: 100%;
@@ -24,20 +23,19 @@ body {
 
 /* comienza el navbar */
 .navbar {
-  padding: 8px 0;
+  padding: 1px 0;
+  border-bottom: 1px solid var(--kumqat);
 }
-
-.container-fluid {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  background: var(--gataloupe);
+.container-fluid{
+    height: 50px;
+    overflow: hidden;
 }
 
 #title {
   display: flex;
   align-items: center;
   font-family: "Glass Antiqua", cursive;
+  object-fit: contain;
   p {
     font-family: "Lora", serif;
     font-size: small;
@@ -72,12 +70,11 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--kumqat);
   width: 90%;
   border: 1px solid var(--kumqat);
   border-radius: 28px 0px;
   padding: 4%;
-  margin-bottom: 48px; /*este es para borrar ahorita */
+  margin: 4% 0; /*este es para borrar ahorita */
 }
 input,
 textarea {
@@ -91,7 +88,7 @@ textarea {
   height: 50px;
 }
 #textarea-description {
-  height: 300px;
+  height: 150px;
   margin: 4% 0;
   padding-top: 4%;
 }
@@ -136,7 +133,7 @@ textarea {
   flex-direction: column;
   align-items: center;
   width: 80%;
-  margin-bottom: 4%;
+  margin-bottom: 2%;
   input {
     padding: 0;
   }
@@ -153,10 +150,98 @@ textarea {
   }
   span {
     font-size: small;
+    font-family: "Lora";
   }
   #mood-value {
     text-align: center;
     font-size: large;
+    font-family: "Lora" serif;
+
+    margin-top: 2%;
+  }
+}
+
+.container-destruction-items {
+  width: 80%;
+  display: flex;
+  padding: 0 0.5%;
+  gap: 4%;
+}
+.container-destruction {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 80%;
+  gap: 4%;
+  font-size: small;
+  font-family: "Lora";
+
+  input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin: 0 2%;
+    padding: 0;
+  }
+  p {
+    margin: 0;
+    width: 80%;
+    padding: 0 2%;
+  }
+}
+#time-self-destruction {
+  width: 70px;
+  padding: 0%;
+  text-align: center;
+  background: white;
+  margin: 2%;
+}
+.container-hourglass {
+  width: 80%;
+  display: flex;
+  padding: 0 0.5%;
+  gap: 4%;
+
+  .container-check {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 80%;
+    gap: 4%;
+    font-size: small;
+    font-family: "Lora";
+  }
+  input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    margin: 0 2%;
+    padding: 0;
+  }
+  p {
+    margin: 0;
+    padding: 0 2%;
+  }
+  #unlock-date {
+    width: 70px;
+    padding: 0 4%;
+    text-align: center;
+    background: white;
     margin: 2%;
   }
+}
+
+.container-save-note {
+  width: 80%;
+  display: flex;
+  justify-content: end;
+}
+#btn-save-note {
+  height: 50px;
+  width: 50%;
+  border-radius: 24px;
+  box-shadow: 1.5px 1.5px 0 0 var(--oragen-zest);
+  border: none;
+  background-color: var(--kumqat);
+  margin: 2%;
 }
