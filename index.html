@@ -29,13 +29,14 @@
         <div class="container-fluid">
           <div class="navbar-brand" id="title" href="#">
             <img
-              src="./assets/pixil-frame-0.png"
+              src="./assets/pixil-frame-favicon.png"
               alt="Logo"
               width="50"
               height="50"
               class="d-inline-block align-text-top"
+              id="logo"
             />
-            <div class="container-fluid">
+            <div class="container-fluid container-description">
               <h1>Notas Rápidas</h1>
               <p>De ideas temporales a realidad</p>
             </div>
@@ -56,10 +57,11 @@
           />
           <textarea
             name="contend"
-            placeholder="Ya tienes la idea? ¡Vamos a escribirla!"
+            placeholder="¿Ya tienes la idea? ¡Vamos a escribirla!"
+            id="textarea-description"
             required
           ></textarea>
-          <div>
+          <div class="container-colors">
             <button class="btn-color" id="one"></button>
             <button class="btn-color" id="two"></button>
             <button class="btn-color" id="three"></button>
@@ -70,10 +72,11 @@
           </div>
 
           <div class="mood-slider">
-            <span>Muy mal</span>
-
             <input type="range" id="mood" min="0" max="100" value="50" />
-            <span>Increible</span>
+            <div class="container-mood-desciption">
+              <span>Muy mal</span>
+              <span>Increible</span>
+            </div>
             <p>
               ¿Cómo te sientes en relación a lo que escribiste en tu nota?
               <span id="mood-value">Neutral</span>
