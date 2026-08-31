@@ -5,7 +5,8 @@
   --gataloupe: #fdcb7b;
   --kumqat: #eea54b;
   --oragen-zest: #d9641f;
-  --cream: #e5deca;
+  --cream: #efebde;
+  --lemon-cream:#FFF7;
 
   --btn-peach: #ffd6a5;
   --btn-lilac: #e6d6f7;
@@ -17,26 +18,26 @@
 }
 body {
   margin: 0;
-  height: 100%;
-  width: 100%;
+  height: 100svh;
+  width: 100svw;
+  background-color: var(--cream);
 }
 
+.container-fluid{
+  background-color: var(--btn-sand);
+}
 /* comienza el navbar */
 .navbar {
   padding: 1px 0;
   border-bottom: 1px solid var(--kumqat);
-}
-.container-fluid{
-    height: 50px;
-    overflow: hidden;
 }
 
 #title {
   display: flex;
   align-items: center;
   font-family: "Glass Antiqua", cursive;
-  object-fit: contain;
   p {
+    height: 15px;
     font-family: "Lora", serif;
     font-size: small;
     margin-bottom: 0;
@@ -55,6 +56,8 @@ p {
   padding: 0;
   h1 {
     margin-bottom: 0;
+    height: 26px;
+    display: flex;
   }
 }
 
@@ -88,7 +91,7 @@ textarea {
   height: 50px;
 }
 #textarea-description {
-  height: 150px;
+  height: 100px; /*-------------------------------revisar el tamaño al final del maquetado---------*/
   margin: 4% 0;
   padding-top: 4%;
 }
@@ -150,12 +153,12 @@ textarea {
   }
   span {
     font-size: small;
-    font-family: "Lora";
+    font-family: "Lora", serif;
   }
   #mood-value {
     text-align: center;
     font-size: large;
-    font-family: "Lora" serif;
+    font-family: "Lora", serif;
 
     margin-top: 2%;
   }
@@ -174,7 +177,7 @@ textarea {
   width: 80%;
   gap: 4%;
   font-size: small;
-  font-family: "Lora";
+  font-family: "Lora", serif;
 
   input[type="checkbox"] {
     width: 24px;
@@ -209,7 +212,7 @@ textarea {
     width: 80%;
     gap: 4%;
     font-size: small;
-    font-family: "Lora";
+    font-family: "Lora", serif;
   }
   input[type="checkbox"] {
     width: 24px;
@@ -237,11 +240,59 @@ textarea {
   justify-content: end;
 }
 #btn-save-note {
-  height: 50px;
+  height: 40px;
   width: 50%;
   border-radius: 24px;
-  box-shadow: 1.5px 1.5px 0 0 var(--oragen-zest);
+  box-shadow: 1px 2px 0 0 var(--kumqat);
   border: none;
-  background-color: var(--kumqat);
+  background-color: var(--gataloupe);
   margin: 2%;
+}
+
+/* fin del section de agregar notas */
+
+.container-view-notes {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 200px;
+  font-family: "Lora", serif;
+  border-radius: 28px 0;
+  border: 1px solid var(--kumqat);
+  padding: 4%;
+
+  .container-filter {
+    margin: 2% 0;
+    height: 50px;
+
+    .btn-filter {
+      border-radius: 24px;
+      width: 100px;
+      border: 1px solid var(--kumqat);
+    }
+  }
+
+  .container-notes {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 130px;
+    background-color: var(--cream);
+    border-radius: 16px;
+
+    img {
+      height: 50px;
+      width: 50px;
+      margin: 2% 0;
+    }
+    h4 {
+      color: var(--exocarp);
+      height: 25px;
+      margin-bottom: 0;
+    }
+    #question {
+      margin-bottom: 0;
+    }
+  }
 }
