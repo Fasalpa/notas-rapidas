@@ -65,6 +65,7 @@ p {
 section {
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 100%;
 }
 /* comienza el section de form  */
