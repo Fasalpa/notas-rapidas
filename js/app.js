@@ -3,27 +3,32 @@ const inputTitle = document.getElementById("input-title");
 const textArea = document.getElementById("textarea-description");
 const colors = document.querySelectorAll(".btn-color");
 
-const notas = [];
+const notes = [];
+let background = "";
+colorBtnNote();
 
 bntSave.addEventListener("click", (e) => {
   e.preventDefault();
 
-  const nuevaNota = {
+  const newNote = {
     title: inputTitle.value,
-    textArea: textArea.value,
+    text: textArea.value,
+    colorBackground: background,
   };
 
-  notas.push(nuevaNota);
+  notes.push(newNote);
+  localStorage.setItem("notes", JSON.stringify(notes));
+  const notaGuardada = JSON.parse(localStorage.getItem("notes"));
 
-  localStorage.setItem("notas", JSON.stringify(notas));
-  const notasGuardadas = JSON.parse(localStorage.getItem(notas)) || [];
-
-  console.log(notasGuardadas);
+  console.log(notaGuardada);
 });
 
-colors.forEach((c) => {
-  c.addEventListener("click", function () {
-    const background = getComputedStyle(c).backgroundColor;
-    console.log(background);
+function colorBtnNote() {
+  colors.forEach((c) => {
+    c.addEventListener("click", () => {
+      background = getComputedStyle(c).backgroundColor;
+    });
   });
-});
+}
+
+
