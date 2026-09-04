@@ -47,7 +47,7 @@
 
     <main>
       <section>
-        <form action="">
+        <form id="form">
           <input
             type="text"
             name="title"
@@ -79,7 +79,7 @@
             </div>
             <p>
               ¿Cómo te sientes en relación a lo que escribiste en tu nota?
-              <span id="mood-value">Neutral</span>
+              <span id="mood-value">Neutral 😐</span>
             </p>
           </div>
           <div class="container-destruction-items">
@@ -89,10 +89,10 @@
             </label>
 
             <input
-              type="number"
+              type="datetime-local"
               name="time"
               id="time-self-destruction"
-              placeholder="Horas"
+              placeholder="Tiempo"
               disabled
             />
           </div>
@@ -103,7 +103,7 @@
               <p>Cápsula del tiempo</p>
             </label>
             <input
-              type="datetime"
+              type="datetime-local"
               name="unlock-date"
               id="unlock-date"
               disabled
@@ -111,30 +111,23 @@
           </div>
 
           <div class="container-save-note">
-            <button type="submit" id="btn-save-note">Guardar nota</button>
+            <button type="submit" id="btn-save-note" disabled>
+              Guardar nota
+            </button>
           </div>
         </form>
       </section>
 
+      <section class="container-filter">
+        <button type="button" class="btn-filter btn-filter-all">Todas</button>
+        <button type="button" class="btn-filter btn-filter-mood">Ánimo</button>
+        <button type="button" class="btn-filter btn-filter-capsule">
+          Cápsulas
+        </button>
+      </section>
       <section>
         <div class="container-view-notes">
-          <section class="container-filter">
-            <button type="button" class="btn-filter btn-filter-all">
-              Todas
-            </button>
-            <button type="button" class="btn-filter btn-filter-mood">
-              Ánimo
-            </button>
-            <button type="button" class="btn-filter btn-filter-capsule">
-              Cápsulas
-            </button>
-          </section>
-          <div class="container-notes rise">
-            <img src="./assets/notes.png" alt="clean notes icon" />
-            <h4>Aún no tienes notas</h4>
-            <p id="question">Escribimos la primer nota?</p>
-            <p>Arriba encontrarás todo para agregar tu nota.</p>
-          </div>
+          <div class="container-notes rise"></div>
           <!-- <ul>
             <li>
               <div>
@@ -144,16 +137,11 @@
                 </div>
                 <p>Mostrar cambio de estados y avance con una barra</p>
                 <div>
-                  <img
-                    src="./assets/./reloj-off.png"
-                    alt="bell"
-                    id="reminder-clock-off"
-                  />
                   <span class="mood-value-note">Neutral</span>
                 </div>
               </div>
-              </li>
-          <li>
+            </li>
+            <li>
             <div>
               <div>
                 <h3>Idea para proyecto de frontend</h3>
@@ -166,7 +154,7 @@
               </div>
             </div>
           </li>
-          <li>
+            <li>
             <div>
               <div>
                 <h3>Nota privada con fecha</h3>
@@ -182,7 +170,6 @@
               </div>
             </div>
           </li>
-            </li>
           </ul> -->
         </div>
       </section>
@@ -193,4 +180,3 @@
     <script src="./js/app.js"></script>
   </body>
 </html>
-
