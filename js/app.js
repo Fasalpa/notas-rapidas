@@ -1,3 +1,4 @@
+const form = document.getElementById("form");
 const btnSave = document.getElementById("btn-save-note");
 const inputTitle = document.getElementById("input-title");
 const textArea = document.getElementById("textarea-description");
@@ -104,45 +105,25 @@ function renderNotes() {
     containerNotes.innerHTML = notes
       .map((nota) => {
         return `
-            <div class="card-nota" style="display:flex;
-                flex-direction:column;
-                align-items:center;
-                justify-content:center;
-                border-radius:16px;
-                background-color:${nota.colorBackground};
-                height:100%;width:90%;">
-              <h3>${nota.title}</h3>
-              <p>${nota.text}</p>
-              <div style="display:flex;
-                            flex-direction:row;
-                            justify-content:center;
-                            width:100%;">
-                <p style="margin:0;">
-                  Fecha: ${new Date(nota.date).toLocaleString()}</p>
-              </div>
-              <div style="display:flex;
-                          flex-direction:row;
-                          width:80%;
-                          height:100px;
-                          justify-content:space-around;
-                          align-items: center;
-                          gap:15%;
-                          margin-bottom:4%;
-                          ">
-                <p style="margin:0;"><span>ánimo</span></p>
-                <span class="mood-value-note" 
-                      style="border:2px dotted white;
-                      border-radius:16px;
-                      padding:4px;">${nota.mood || "Neutral"}</span>
-              </div>
-          </div>`;
+          <article class="card-nota" style="background-color: ${nota.colorBackground || "var(--btn-lemon)"};">
+            <h3 class="card-nota-title">${nota.title}</h3>
+            <p class="card-nota-text">${nota.text}</p>
+            
+            <div class="card-nota-footer">
+              <p class="card-nota-date">Fecha: ${new Date(nota.date).toLocaleString()}</p>
+            </div>
+            
+            <div class="card-nota-meta">
+              <span class="card-nota-mood-label">Ánimo</span>
+              <span class="card-nota-mood-badge">${nota.mood || "Neutral 😐"}</span>
+            </div>
+          </article>`;
       })
       .join("");
   }
 }
 
-btnSave.addEventListener("submit", () => {
-
+form.addEventListener("submit", () => {
   const newNote = {
     id: crypto.randomUUID(),
     title: inputTitle.value,

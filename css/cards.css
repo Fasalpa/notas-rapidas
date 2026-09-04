@@ -1,0 +1,65 @@
+.card-nota {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 120px;
+  padding: 0.85rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.card-nota:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+.card-nota-title {
+  margin-top: 2%;
+  font-family: "Lora", serif;
+  font-size: 1.1rem;
+  color: #333;
+}
+.card-nota-text {
+  margin: 0 0 1rem 0;
+  font-family: "Lora", serif;
+  font-size: 0.95rem;
+  color: #555;
+  text-align: center;
+}
+
+.card-nota-footer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.card-nota-date {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+.card-nota-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
+}
+.card-nota-mood-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #444;
+}
+.card-nota-mood-badge {
+  display: inline-block;
+  padding: 1px 12px;
+  border-radius: 12px;
+  border: 1px dashed #ffffff;
+  background-color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+  font-weight: bold;
+}
