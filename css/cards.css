@@ -34,12 +34,15 @@
   justify-content: center;
   width: 100%;
   margin-bottom: 0.5rem;
+  gap: 4%;
 }
 
 .card-nota-date {
   margin: 0;
   font-size: 0.8rem;
   color: #666;
+  padding: 2%;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
 }
 .card-nota-meta {
   display: flex;
@@ -62,4 +65,37 @@
   background-color: rgba(255, 255, 255, 0.4);
   font-size: 0.85rem;
   font-weight: bold;
+}
+
+.capsule-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+.capsule-badge.locked {
+  background-color: rgba(
+    195,
+    84,
+    20,
+    0.15
+  ); /* Tono suave usando tus variables de color */
+  color: var(--oragen-zest);
+  border: 1px dashed var(--kumqat);
+}
+.capsule-badge.unlocked {
+  background-color: rgba(120, 132, 23, 0.15);
+  color: var(--exocarp);
+  border: 1px solid var(--exocarp);
+}
+.destruction-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
 }
