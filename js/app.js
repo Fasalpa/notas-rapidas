@@ -10,16 +10,19 @@ const timeDestruction = document.getElementById("time-self-destruction");
 const capsule = document.getElementById("check-capsule");
 const timeCapsule = document.getElementById("unlock-date");
 const containerNotes = document.querySelector(".container-notes");
+const btnFilter = document.querySelectorAll(".btn-filter");
 
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
-let background = "#d0f0de";
+let background = "";
 let stateMind = "Neutral 😐";
 let valueTimeDestruction = "";
+let filter = "";
 colorBtnNote();
 listenerDestruction();
 listenerCapsule();
 validationText();
 renderNotes();
+filterBtn();
 
 function colorBtnNote() {
   colors.forEach((c) => {
@@ -28,6 +31,28 @@ function colorBtnNote() {
         background = "var(--btn-lemon)";
       } else {
         background = getComputedStyle(c).backgroundColor;
+      }
+    });
+  });
+}
+
+function filterBtn() {
+  btnFilter.forEach((b) => {
+    b.addEventListener("click", () => {
+      console.log(b);
+
+      if (b.textContent === "Todas") {
+        filter = "all";
+        console.log("all");
+        renderNotes();
+      } else if (b.textContent === "Ánimo") {
+        console.log("mood");
+        filter = "mood";
+        renderNotes();
+      } else {
+        console.log("capsule");
+        filter = "capsule";
+        renderNotes();
       }
     });
   });
@@ -95,14 +120,24 @@ function validationText() {
 }
 
 function renderNotes() {
-  if (notes.length === 0) {
+  let notesRender = notes;
+
+  if (filter === "capsule") {
+    notesRender = notes.filter((nota) => nota.capsule !== null);
+  } else if (filter === "mood") {
+    notesRender = notes.filter((nota) => nota.mood !== "Neutral 😐");
+  } else {
+    notesRender = notes;
+  }
+
+  if (notesRender.length === 0) {
     containerNotes.innerHTML = `
             <img src="./assets/notes.png" alt="clean notes icon"/>
             <h4>Aún no tienes notas</h4>
             <p id="question">Escribimos la primer nota?</p>
             <p>Arriba encontrarás todo para agregar tu nota.</p>`;
   } else {
-    containerNotes.innerHTML = notes
+    containerNotes.innerHTML = notesRender
       .map((nota) => {
         // cápsula de tiempo
         const validationDateCapsule = Boolean(nota.capsule);
@@ -129,19 +164,22 @@ function renderNotes() {
           : "";
 
         return `
-          <article class="card-nota" style="background-color: ${nota.colorBackground || "var(--btn-lemon)"};">
-            <h3 class="card-nota-title">${nota.title}</h3>
-            <p class="card-nota-text">${textToShow}</p>
+          <article class="card-note" style="background-color: ${nota.colorBackground || "var(--btn-lemon)"};">
+            <div class="card-note-container">
+              <h3 class="card-note-title">${nota.title}</h3>
+              <button type="button" data-id="${nota.id}" class="btn-delete">🗑️</button>
+            </div>
+            <p class="card-note-text">${textToShow}</p>
             
-            <div class="card-nota-footer">
-              <p class="card-nota-date">Creado: ${new Date(nota.date).toLocaleString()}</p>
+            <div class="card-note-footer">
+              <p class="card-note-date">Creado: ${new Date(nota.date).toLocaleString()}</p>
               ${capsuleStatusHTML}
               ${timeToShow}
             </div>
             
-            <div class="card-nota-meta">
-              <span class="card-nota-mood-label">Ánimo</span>
-              <span class="card-nota-mood-badge">${nota.mood || "Neutral 😐"}</span>
+            <div class="card-note-meta">
+              <span class="card-note-mood-label">Ánimo</span>
+              <span class="card-note-mood-badge">${nota.mood || "Neutral 😐"}</span>
             </div>
           </article>`;
       })
@@ -170,7 +208,7 @@ form.addEventListener("submit", (e) => {
   notes.push(newNote);
   localStorage.setItem("notes", JSON.stringify(notes));
 
-  renderNotes();
+  // renderNotes();
   resetValues();
 });
 
@@ -198,7 +236,7 @@ function destroyExpiredNotes() {
 }
 
 function resetValues() {
-inputTitle.value = "";
+  inputTitle.value = "";
   textArea.value = "";
   moodSlider.value = 50;
   moodValue.textContent = "Neutral 😐";
@@ -210,6 +248,25 @@ inputTitle.value = "";
   timeCapsule.disabled = true;
   btnSave.disabled = true;
 }
+
+containerNotes.addEventListener("click", (e) => {
+  if (
+    e.target.classList.contains("btn-delete") ||
+    e.target.closest(".btn-delete")
+  ) {
+    const btnE = e.target.closest(".btn-delete");
+    const noteId = btnE.dataset.id;
+
+    deleteNote(noteId);
+  }
+});
+
+function deleteNote(id) {
+  notes = notes.filter((nota) => nota.id !== id);
+  localStorage.setItem("notes", JSON.stringify(notes));
+  renderNotes();
+}
+
 // refrescar para la cuenta regresiva
 setInterval(() => {
   destroyExpiredNotes();
