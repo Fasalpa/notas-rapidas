@@ -1,4 +1,4 @@
-.card-nota {
+.card-note {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -10,18 +10,34 @@
   flex-shrink: 0;
   box-sizing: border-box;
 }
-.card-nota:hover {
+.card-note:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
-.card-nota-title {
+.card-note-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.card-note-title {
   margin-top: 2%;
   font-family: "Lora", serif;
   font-size: 1.1rem;
   color: #333;
 }
-.card-nota-text {
+.btn-delete {
+  display: flex;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  width: 25px;
+  margin-right: 10px;
+}
+
+.card-note-text {
   margin: 0 0 1rem 0;
   font-family: "Lora", serif;
   font-size: 0.95rem;
@@ -29,7 +45,7 @@
   text-align: center;
 }
 
-.card-nota-footer {
+.card-note-footer {
   display: flex;
   justify-content: center;
   width: 100%;
@@ -37,14 +53,14 @@
   gap: 4%;
 }
 
-.card-nota-date {
+.card-note-date {
   margin: 0;
   font-size: 0.8rem;
   color: #666;
   padding: 2%;
   border-top: 1px dashed rgba(0, 0, 0, 0.15);
 }
-.card-nota-meta {
+.card-note-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,12 +68,12 @@
   padding-top: 0.5rem;
   border-top: 1px dashed rgba(0, 0, 0, 0.15);
 }
-.card-nota-mood-label {
+.card-note-mood-label {
   font-size: 0.8rem;
   font-weight: 600;
   color: #444;
 }
-.card-nota-mood-badge {
+.card-note-mood-badge {
   display: inline-block;
   padding: 1px 12px;
   border-radius: 12px;
