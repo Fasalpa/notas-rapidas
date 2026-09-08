@@ -9,6 +9,8 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
   box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .card-note:hover {
   transform: translateY(-2px);
@@ -19,7 +21,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  overflow: hidden;
   cursor: pointer;
+  width: 100%;
 }
 
 .card-note-title {
@@ -31,18 +35,27 @@
 .btn-delete {
   display: flex;
   justify-content: center;
+  align-items: center;
   background: transparent;
   border: none;
-  width: 25px;
+  width: 30px;
   margin-right: 10px;
 }
-
+.btn-delete:hover {
+  background-color: var(--cream);
+  border-radius: 100%;
+  aspect-ratio: 1/1;
+}
+.card-container-text {
+  overflow: auto;
+}
 .card-note-text {
   margin: 0 0 1rem 0;
   font-family: "Lora", serif;
   font-size: 0.95rem;
   color: #555;
   text-align: center;
+  padding: 0 2%;
 }
 
 .card-note-footer {
@@ -93,12 +106,7 @@
 }
 
 .capsule-badge.locked {
-  background-color: rgba(
-    195,
-    84,
-    20,
-    0.15
-  ); /* Tono suave usando tus variables de color */
+  background-color: rgba(195, 84, 20, 0.15);
   color: var(--oragen-zest);
   border: 1px dashed var(--kumqat);
 }

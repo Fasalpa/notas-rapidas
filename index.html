@@ -53,11 +53,15 @@
             name="title"
             id="input-title"
             placeholder="¿Cómo nombraremos esta nota?"
+            minlength="4"
+            maxlength="30"
             required
           />
           <textarea
             name="contend"
             placeholder="¿Ya tienes la idea? ¡Vamos a escribirla!"
+            maxlength="300"
+            minlength="4"
             id="textarea-description"
             required
           ></textarea>
@@ -74,7 +78,7 @@
           <div class="mood-slider">
             <input type="range" id="mood" min="0" max="100" value="50" />
             <div class="container-mood-desciption">
-              <span>Muy mal</span>
+              <span>Terrible</span>
               <span>Increible</span>
             </div>
             <p>
@@ -121,54 +125,13 @@
       <section class="container-filter">
         <button type="button" class="btn-filter btn-filter-all">Todas</button>
         <button type="button" class="btn-filter btn-filter-mood">Ánimo</button>
-        <button type="button" class="btn-filter btn-filter-capsule">Cápsulas</button>
+        <button type="button" class="btn-filter btn-filter-capsule">
+          Cápsulas
+        </button>
       </section>
       <section>
         <div class="container-view-notes">
           <div class="container-notes rise"></div>
-          <!-- <ul>
-            <li>
-              <div>
-                <div>
-                  <h3>Idea para proyecto de frontend</h3>
-                  <p><span>ánimo</span></p>
-                </div>
-                <p>Mostrar cambio de estados y avance con una barra</p>
-                <div>
-                  <span class="mood-value-note">Neutral</span>
-                </div>
-              </div>
-            </li>
-            <li>
-            <div>
-              <div>
-                <h3>Idea para proyecto de frontend</h3>
-                <p><span>ánimo</span></p>
-              </div>
-              <p>Nota con tiempo de eliminación</p>
-              <div>
-                <img src="./assets/timer.png" alt="clock" id="hourglass" />
-                <span class="mood-value-note">Neutral</span>
-              </div>
-            </div>
-          </li>
-            <li>
-            <div>
-              <div>
-                <h3>Nota privada con fecha</h3>
-                <p><span>ánimo</span></p>
-              </div>
-              <p>
-                Esta es una nota privada que solo puede ser leida con una fecha
-                específica
-              </p>
-              <div>
-                <img src="./assets/ring.png" alt="ring" id="reminder-bell" />
-                <span class="mood-value-note">Increible</span>
-              </div>
-            </div>
-          </li>
-          </ul> -->
         </div>
       </section>
     </main>
