@@ -27,10 +27,12 @@ filterBtn();
 function colorBtnNote() {
   colors.forEach((c) => {
     c.addEventListener("click", () => {
+      colors.forEach((btn) => btn.classList.remove("selected"));
       if (background === "") {
         background = "var(--btn-lemon)";
       } else {
         background = getComputedStyle(c).backgroundColor;
+        c.classList.add("selected");
       }
     });
   });
@@ -60,28 +62,39 @@ function filterBtn() {
 
 moodSlider.addEventListener("input", () => {
   const valueMood = moodSlider.value;
-
   if (valueMood < 14.28) {
-    moodValue.textContent = "Muy mal 😫";
+    moodValue.textContent = "Terrible 😫";
     stateMind = moodValue.textContent;
+    moodSlider.style.setProperty("--mood-color", "var(--terrible)");
   } else if (valueMood < 28.56) {
     moodValue.textContent = "Mal 😔";
     stateMind = moodValue.textContent;
+    moodSlider.style.setProperty("--mood-color", "var(--mal)");
   } else if (valueMood < 42.82) {
     moodValue.textContent = "Ligeramente mal 😕";
     stateMind = moodValue.textContent;
+
+    moodSlider.style.setProperty("--mood-color", "var(--ligeramente-mal)");
   } else if (valueMood < 57.12) {
     moodValue.textContent = "Neutral 😐";
     stateMind = moodValue.textContent;
+
+    moodSlider.style.setProperty("--mood-color", "var(--neutral)");
   } else if (valueMood < 71.4) {
     moodValue.textContent = "Ligeramente bien 🙂";
     stateMind = moodValue.textContent;
+
+    moodSlider.style.setProperty("--mood-color", "var(--ligeramente-bien)");
   } else if (valueMood < 85.68) {
     moodValue.textContent = "Bien 😊";
     stateMind = moodValue.textContent;
+
+    moodSlider.style.setProperty("--mood-color", "var(--bien)");
   } else {
-    moodValue.textContent = "Muy bien 😁";
+    moodValue.textContent = "Increible 😁";
     stateMind = moodValue.textContent;
+
+    moodSlider.style.setProperty("--mood-color", "var(--increible)");
   }
 });
 
@@ -112,7 +125,11 @@ function listenerCapsule() {
 function validationText() {
   inputTitle.addEventListener("input", () => {
     if (inputTitle.value !== "") {
-      btnSave.disabled = false;
+      textArea.addEventListener("input", () => {
+        if (textArea.value !== "") {
+          btnSave.disabled = false;
+        }
+      });
     } else {
       btnSave.disabled = true;
     }
@@ -133,7 +150,7 @@ function renderNotes() {
   if (notesRender.length === 0) {
     containerNotes.innerHTML = `
             <img src="./assets/notes.png" alt="clean notes icon"/>
-            <h4>Aún no tienes notas</h4>
+            <h5>Aún no tienes notas</h5>
             <p id="question">Escribimos la primer nota?</p>
             <p>Arriba encontrarás todo para agregar tu nota.</p>`;
   } else {
@@ -166,11 +183,12 @@ function renderNotes() {
         return `
           <article class="card-note" style="background-color: ${nota.colorBackground || "var(--btn-lemon)"};">
             <div class="card-note-container">
-              <h3 class="card-note-title">${nota.title}</h3>
+              <h5 class="card-note-title">${nota.title}</h5>
               <button type="button" data-id="${nota.id}" class="btn-delete">🗑️</button>
             </div>
-            <p class="card-note-text">${textToShow}</p>
-            
+            <div class="card-container-text">
+              <p class="card-note-text">${textToShow}</p>
+            </div>
             <div class="card-note-footer">
               <p class="card-note-date">Creado: ${new Date(nota.date).toLocaleString()}</p>
               ${capsuleStatusHTML}
@@ -208,8 +226,17 @@ form.addEventListener("submit", (e) => {
   notes.push(newNote);
   localStorage.setItem("notes", JSON.stringify(notes));
 
-  // renderNotes();
-  resetValues();
+  renderNotes();
+
+  const textoOriginal = btnSave.textContent;
+  btnSave.textContent = "Guardada!";
+  btnSave.classList.add("saved");
+
+  setTimeout(() => {
+    btnSave.textContent = textoOriginal;
+    btnSave.classList.remove("saved");
+    resetValues();
+  }, 2000);
 });
 
 function timeRemaining(timeStamp) {
