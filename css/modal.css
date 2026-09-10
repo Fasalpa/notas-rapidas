@@ -1,0 +1,130 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px); /* difuminar el fondo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  z-index: 1000;
+  opacity: 1;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+/* Clase de utilidad para ocultar el modal */
+.modal-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.modal-content {
+  background-color: var(--btn-sand, #fff);
+  width: clamp(300px, 90vw, 550px);
+  padding: 1.8rem;
+  background-image: url("../assets/background.png");
+  background-size: cover;
+  border-radius: 28px 0;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.hidden .modal-content {
+  transform: translateY(-20px);
+}
+
+.btn-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  padding: 1rem;
+  cursor: pointer;
+  color: var(--exocarp, #333);
+}
+
+.modal-title {
+  font-family: "Glass Antiqua", cursive;
+  margin-bottom: 1rem;
+}
+
+.form-modal .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.form-modal {
+  width: 100%;
+  border: none;
+}
+
+#modal-title-description,
+#modal-text-description {
+  font-family: "Lora", serif;
+  padding: 0 0.5rem;
+}
+#edit-title,
+#edit-text {
+  font-family: "lora", serif;
+  border-radius: 16px 0;
+}
+
+.form-modal input,
+.form-modal textarea {
+  padding: 0.6rem;
+  border: 1px solid var(--kumqat, #ccc);
+  border-radius: 8px;
+  font-family: "Lora", serif;
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+
+.btn-secondary,
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--exocarp);
+  background-color: var(--cream);
+  border-radius: 18px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--kumqat);
+  transition: color 0.4s ease;
+}
+
+.btn-secondary::before, .btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--orange-star);
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: -1;
+}
+.btn-secondary:hover::before,.btn-primary:hover::before {
+  transform: translateY(0);
+}
+
+.btn-secondary:hover,
+.btn-primary:hover {
+  background: var(--cream);
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+}
