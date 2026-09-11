@@ -2,6 +2,10 @@
 
 > Aplicación web interactiva para la gestión avanzada de notas personales con **Cápsulas del Tiempo** bloqueadas condicionalmente, **Autodestrucción programada en tiempo real**, seguimiento del estado de ánimo y **operaciones CRUD completas**.
 
+### En construcción?
+
+* Si, esta app sigue mejorando (**pronto implementará la versión con backend para almacenamiento en bases de datos**)
+
 ---
 
 ## 🚀 Características Principales
