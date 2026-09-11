@@ -12,11 +12,21 @@ const timeCapsule = document.getElementById("unlock-date");
 const containerNotes = document.querySelector(".container-notes");
 const btnFilter = document.querySelectorAll(".btn-filter");
 
+// modal
+const modalNote = document.getElementById("modal-note");
+const btnCloseModal = document.getElementById("btn-close-modal");
+const btnCancelEdit = document.getElementById("btn-cancel-edit");
+const formEditNote = document.getElementById("form-edit-note");
+const editTitle = document.getElementById("edit-title");
+const editText = document.getElementById("edit-text");
+const editDate = document.getElementById("edit-date");
+
 let notes = JSON.parse(localStorage.getItem("notes")) || [];
 let background = "";
 let stateMind = "Neutral 😐";
 let valueTimeDestruction = "";
 let filter = "";
+let currentEditingNoteId = null;
 colorBtnNote();
 listenerDestruction();
 listenerCapsule();
@@ -177,11 +187,11 @@ function renderNotes() {
         const hasDestruction = Boolean(nota.destruction);
 
         const timeToShow = hasDestruction
-          ? `<p class="destruction-badge"><b>Destrucción: <br> ${timeRemaining(nota.destruction)}</b></p>`
+          ? `<p class="destruction-badge">Destrucción: ${timeRemaining(nota.destruction)}</p>`
           : "";
 
         return `
-          <article class="card-note" style="background-color: ${nota.colorBackground || "var(--btn-lemon)"};">
+          <article class="card-note" data-id="${nota.id}" style="background-color: ${nota.colorBackground || "var(--btn-lemon)"};">
             <div class="card-note-container">
               <h5 class="card-note-title">${nota.title}</h5>
               <button type="button" data-id="${nota.id}" class="btn-delete">🗑️</button>
@@ -285,7 +295,67 @@ containerNotes.addEventListener("click", (e) => {
     const noteId = btnE.dataset.id;
 
     deleteNote(noteId);
+    return;
   }
+  const card = e.target.closest(".card-note");
+  if (card) {
+    const noteId = card.dataset.id;
+    openModal(noteId);
+  }
+});
+
+function openModal(id) {
+  const targetNote = notes.find((n) => n.id === id);
+  if (!targetNote) {
+    return;
+  }
+  const isLoked =
+    targetNote.capsule && new Date(targetNote.capsule).getTime() > Date.now();
+  if (isLoked) {
+    alert(
+      "🔒 Esta nota no se puede editar hasta que se abra la capsula del tiempo. (recuerda que es un regalo de ti para ti 😊)",
+    );
+    return;
+  }
+
+  currentEditingNoteId = id;
+
+  editTitle.value = targetNote.title;
+  editText.value = targetNote.text;
+  editDate.textContent = `Creada: ${new Date(targetNote.date).toLocaleString()}`;
+
+  modalNote.classList.remove("hidden");
+}
+
+function closeModal() {
+  modalNote.classList.add("hidden");
+  currentEditingNoteId = null;
+}
+
+btnCloseModal.addEventListener("click", closeModal);
+btnCancelEdit.addEventListener("click", closeModal);
+
+modalNote.addEventListener("click", (e) => {
+  if (e.target === modalNote) {
+    closeModal();
+  }
+});
+formEditNote.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  if (!currentEditingNoteId) {
+    return;
+  }
+  notes = notes.map((nota) => {
+    if (nota.id === currentEditingNoteId) {
+      return { ...nota, title: editTitle.value, text: editText.value };
+    }
+    return nota;
+  });
+  localStorage.setItem("notes", JSON.stringify(notes));
+  renderNotes();
+
+  closeModal();
 });
 
 function deleteNote(id) {
@@ -295,7 +365,7 @@ function deleteNote(id) {
 }
 
 // refrescar para la cuenta regresiva
-setInterval(() => {
-  destroyExpiredNotes();
-  renderNotes();
-}, 1000);
+// setInterval(() => {
+//   destroyExpiredNotes();
+//   renderNotes();
+// }, 1000);

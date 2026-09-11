@@ -16,6 +16,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/cards.css" />
+    <link rel="stylesheet" href="./css/modal.css" />
     <link
       rel="icon"
       type="image/x-icon"
@@ -138,6 +140,40 @@
     <aside>
       <div class="container-emotions"></div>
     </aside>
+
+    <!-- maquetado del modal -->
+    <div id="modal-note" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button id="btn-close-modal" class="btn-close">&times;</button>
+
+        <form id="form-edit-note" class="form-modal">
+          <h2 class="modal-title">Detalle de la Nota</h2>
+
+          <div class="input-group">
+            <label for="edit-title" id="modal-title-description">Título</label>
+            <input type="text" id="edit-title" disabled />
+          </div>
+
+          <div class="input-group">
+            <label for="edit-text" id="modal-text-description">Contenido</label>
+            <textarea id="edit-text" rows="5" required></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <span id="edit-date" class="modal-date-info"></span>
+
+            <div class="modal-actions">
+              <button type="button" id="btn-cancel-edit" class="btn-secondary">
+                Cancelar
+              </button>
+              <button type="submit" id="btn-save-edit" class="btn-primary">
+                Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
     <script src="./js/app.js"></script>
   </body>
 </html>
