@@ -1,4 +1,4 @@
-# 📝 Time Capsule Notes
+# 📝 Notas Rápidas
 
 > Aplicación web interactiva para la gestión avanzada de notas personales con **Cápsulas del Tiempo** bloqueadas condicionalmente, **Autodestrucción programada en tiempo real**, seguimiento del estado de ánimo y **operaciones CRUD completas**.
 
