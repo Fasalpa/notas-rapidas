@@ -86,7 +86,7 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: clamp(320px, 90vw, 1100px);
+  width: clamp(320px, 90vw, 800px);
   border: 1px solid var(--kumqat);
   border-radius: 28px 0px;
   padding: 4%;
@@ -102,6 +102,7 @@ textarea {
 
 #input-title {
   height: 50px;
+  font-size: clamp(0.1rem, 2vh, 2.2rem);
 }
 #textarea-description {
   height: 100px;
@@ -178,7 +179,7 @@ textarea {
     appearance: none;
     background: var(--cream);
     height: 8px;
-    margin: 1.5rem 0 1rem;
+    margin: 1rem 0 1rem;
   }
 
   #mood::-webkit-slider-thumb {
@@ -353,6 +354,7 @@ textarea {
 .container-notes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(192px, 1fr));
+  align-content: center;
   gap: 0.85rem;
   width: 100%;
   max-height: 70vh;
@@ -360,6 +362,37 @@ textarea {
   padding: 0.25rem 0.5rem;
   text-overflow: ellipsis;
   box-sizing: border-box;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.empty-state img {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state h5 {
+  font-family: "Glass Antiqua", cursive;
+  font-size: 1.4rem;
+  margin: 0;
+  color: var(--exocarp, #333);
+}
+
+.empty-state p {
+  margin: 0;
+  font-family: "Lora", serif;
+  color: #666;
 }
 
 img {
@@ -384,5 +417,21 @@ h4 {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+@media (min-width: 1900px) {
+  main {
+    display: flex;
+    justify-content: center;
+    padding: 2% 4%;
+    gap: 2%;
+  }
+  .container-cards-filter {
+    width: 90%;
+  }
+  .container-view-notes {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 }

@@ -78,15 +78,15 @@
           </div>
 
           <div class="mood-slider">
+            <p>
+              ¿Cómo te sientes?
+            </p>
             <input type="range" id="mood" min="0" max="100" value="50" />
             <div class="container-mood-desciption">
               <span>Terrible</span>
               <span>Increible</span>
             </div>
-            <p>
-              ¿Cómo te sientes en relación a lo que escribiste en tu nota?
-              <span id="mood-value">Neutral 😐</span>
-            </p>
+            <span id="mood-value">Neutral 😐</span>
           </div>
           <div class="container-destruction-items">
             <label class="container-destruction">
@@ -124,18 +124,22 @@
         </form>
       </section>
 
-      <section class="container-filter">
-        <button type="button" class="btn-filter btn-filter-all">Todas</button>
-        <button type="button" class="btn-filter btn-filter-mood">Ánimo</button>
-        <button type="button" class="btn-filter btn-filter-capsule">
-          Cápsulas
-        </button>
-      </section>
-      <section>
-        <div class="container-view-notes">
-          <div class="container-notes rise"></div>
-        </div>
-      </section>
+      <div class="container-cards-filter">
+        <section class="container-filter">
+          <button type="button" class="btn-filter btn-filter-all">Todas</button>
+          <button type="button" class="btn-filter btn-filter-mood">
+            Ánimo
+          </button>
+          <button type="button" class="btn-filter btn-filter-capsule">
+            Cápsulas
+          </button>
+        </section>
+        <section>
+          <div class="container-view-notes">
+            <div class="container-notes rise"></div>
+          </div>
+        </section>
+      </div>
     </main>
     <aside>
       <div class="container-emotions"></div>

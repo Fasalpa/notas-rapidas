@@ -159,10 +159,12 @@ function renderNotes() {
 
   if (notesRender.length === 0) {
     containerNotes.innerHTML = `
-            <img src="./assets/notes.png" alt="clean notes icon"/>
-            <h5>Aún no tienes notas</h5>
-            <p id="question">Escribimos la primer nota?</p>
-            <p>Arriba encontrarás todo para agregar tu nota.</p>`;
+        <div class="empty-state">
+          <img src="./assets/notes.png" alt="clean notes icon"/>
+          <h5>Aún no tienes notas</h5>
+          <p id="question">¿Escribimos la primera nota?</p>
+          <p>Arriba encontrarás todo para agregar tu nota.</p>
+        </div>`;
   } else {
     containerNotes.innerHTML = notesRender
       .map((nota) => {
@@ -365,7 +367,7 @@ function deleteNote(id) {
 }
 
 // refrescar para la cuenta regresiva
-// setInterval(() => {
-//   destroyExpiredNotes();
-//   renderNotes();
-// }, 1000);
+setInterval(() => {
+  destroyExpiredNotes();
+  renderNotes();
+}, 1000);
