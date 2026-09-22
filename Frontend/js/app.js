@@ -414,7 +414,7 @@ function deleteNote(id) {
 }
 
 // refrescar para la cuenta regresiva
-// setInterval(() => {
-//   destroyExpiredNotes();
-//   renderNotes();
-// }, 1000);
+setInterval(() => {
+  destroyExpiredNotes();
+  renderNotes();
+}, 1000);
