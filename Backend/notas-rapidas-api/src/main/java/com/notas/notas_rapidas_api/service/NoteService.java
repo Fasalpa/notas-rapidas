@@ -2,6 +2,7 @@ package com.notas.notas_rapidas_api.service;
 
 import com.notas.notas_rapidas_api.model.Note;
 import com.notas.notas_rapidas_api.repository.NoteRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,8 +35,13 @@ public class NoteService {
         }
         return noteRepository.save(note);
     }
-
     public void deleteNote(UUID id) {
         noteRepository.deleteById(id);
+    }
+
+    @Scheduled(fixedRate = 5000)
+    public void autoDeleteExpiredNotes() {
+        Long currentTime = System.currentTimeMillis();
+        noteRepository.deleteExpiredNotes(currentTime);
     }
 }
