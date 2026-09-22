@@ -5,13 +5,13 @@ import com.notas.notas_rapidas_api.service.NoteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/notes")
-@CrossOrigin(origins = "*")
 
 public class NoteController {
     private final NoteService noteService;
@@ -53,8 +53,8 @@ public class NoteController {
             return ResponseEntity.ok(updateNote);
         }).orElse(ResponseEntity.notFound().build());
     }
-    @DeleteMapping
-    public ResponseEntity<Note> deleteNote(@PathVariable UUID id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNote(@PathVariable("id") UUID id){
         if(noteService.getNoteById(id).isPresent()){
             noteService.deleteNote(id);
             return ResponseEntity.noContent().build();

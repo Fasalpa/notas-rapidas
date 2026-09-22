@@ -1,3 +1,5 @@
+const API_URL = "http://localhost:8080/api/notes";
+
 const form = document.getElementById("form");
 const btnSave = document.getElementById("btn-save-note");
 const inputTitle = document.getElementById("input-title");
@@ -21,18 +23,29 @@ const editTitle = document.getElementById("edit-title");
 const editText = document.getElementById("edit-text");
 const editDate = document.getElementById("edit-date");
 
-let notes = JSON.parse(localStorage.getItem("notes")) || [];
+let notes = [];
 let background = "";
 let stateMind = "Neutral 😐";
 let valueTimeDestruction = "";
 let filter = "";
 let currentEditingNoteId = null;
+fetchNotes();
 colorBtnNote();
 listenerDestruction();
 listenerCapsule();
 validationText();
 renderNotes();
 filterBtn();
+
+async function fetchNotes() {
+  try {
+    const response = await fetch("http://localhost:8080/api/notes");
+    notes = await response.json();
+    renderNotes();
+  } catch (error) {
+    console.error("Error al traer las notas:", error);
+  }
+}
 
 function colorBtnNote() {
   colors.forEach((c) => {
@@ -217,7 +230,7 @@ function renderNotes() {
   }
 }
 
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const capsuleDate = capsule.checked ? timeCapsule.value : null;
   const destructionDate =
@@ -226,29 +239,42 @@ form.addEventListener("submit", (e) => {
       : null;
 
   const newNote = {
-    id: crypto.randomUUID(),
+    // id: crypto.randomUUID(), esto ya lo genera el java
     title: inputTitle.value,
     text: textArea.value,
     colorBackground: background,
     mood: stateMind,
     destruction: destructionDate,
     capsule: capsuleDate,
-    date: Date.now(),
+    // date: Date.now(), esto ya lo genera el java
   };
-  notes.push(newNote);
-  localStorage.setItem("notes", JSON.stringify(notes));
+  // notes.push(newNote);
+  // localStorage.setItem("notes", JSON.stringify(notes));
 
-  renderNotes();
+  try {
+    const response = await fetch("http://localhost:8080/api/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newNote),
+    });
+    if (response.ok) {
+      await fetchNotes();
 
-  const textoOriginal = btnSave.textContent;
-  btnSave.textContent = "Guardada!";
-  btnSave.classList.add("saved");
+      const textoOriginal = btnSave.textContent;
+      btnSave.textContent = "Guardada!";
+      btnSave.classList.add("saved");
 
-  setTimeout(() => {
-    btnSave.textContent = textoOriginal;
-    btnSave.classList.remove("saved");
-    resetValues();
-  }, 2000);
+      setTimeout(() => {
+        btnSave.textContent = textoOriginal;
+        btnSave.classList.remove("saved");
+        resetValues();
+      }, 2000);
+    }
+  } catch (error) {
+    console.log("Error ");
+  }
 });
 
 function timeRemaining(timeStamp) {
@@ -288,17 +314,38 @@ function resetValues() {
   btnSave.disabled = true;
 }
 
-containerNotes.addEventListener("click", (e) => {
-  if (
-    e.target.classList.contains("btn-delete") ||
-    e.target.closest(".btn-delete")
-  ) {
-    const btnE = e.target.closest(".btn-delete");
-    const noteId = btnE.dataset.id;
+containerNotes.addEventListener("click", async (e) => {
+  //detectamos el botón de eliminar o su contenido
+  const btnDelete = e.target.closest(".btn-delete");
 
-    deleteNote(noteId);
+  if (btnDelete) {
+    // detenemos la propagación para que no active la tarjeta ni el modal
+    e.stopPropagation();
+    e.preventDefault();
+
+    const id = btnDelete.dataset.id;
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/notes/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        await fetchNotes(); // Recargamos las notas desde Spring Boot
+      } else {
+        console.error(
+          "No se pudo eliminar la nota en el servidor. Status:",
+          response.status,
+        );
+      }
+    } catch (error) {
+      console.error("Error al eliminar la nota:", error);
+    }
+
     return;
   }
+
+  //si el clic no fue en el botón de eliminar, abrimos el modal
   const card = e.target.closest(".card-note");
   if (card) {
     const noteId = card.dataset.id;
@@ -367,7 +414,7 @@ function deleteNote(id) {
 }
 
 // refrescar para la cuenta regresiva
-setInterval(() => {
-  destroyExpiredNotes();
-  renderNotes();
-}, 1000);
+// setInterval(() => {
+//   destroyExpiredNotes();
+//   renderNotes();
+// }, 1000);
