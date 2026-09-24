@@ -159,6 +159,23 @@ function validationText() {
   });
 }
 
+function getDestructionBadge(destructionTime) {
+  if (!destructionTime) {
+    return "";
+  }
+  const diffSeconds = Math.max(
+    0,
+    Math.floor((destructionTime - Date.now()) / 1000),
+  );
+
+  const minutes = Math.floor(diffSeconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (diffSeconds % 60).toString().padStart(2, "0");
+
+  return `<span class="badge destruction-badge">🔥 Autodestrucción en ${minutes}:${seconds}</span>`;
+}
+
 function renderNotes() {
   let notesRender = notes;
 
@@ -202,7 +219,7 @@ function renderNotes() {
         const hasDestruction = Boolean(nota.destruction);
 
         const timeToShow = hasDestruction
-          ? `<p class="destruction-badge">Destrucción: ${timeRemaining(nota.destruction)}</p>`
+          ? `<p class="destruction-badge">Destrucción: ${getDestructionBadge(nota.destruction)}</p>`
           : "";
 
         return `
@@ -294,10 +311,21 @@ function timeRemaining(timeStamp) {
 function destroyExpiredNotes() {
   const now = Date.now();
 
-  notes = notes.filter((nota) => {
-    return !nota.destruction || nota.destruction > now;
+  const expiredNotes = notes.filter((nota) => {
+    nota.destruction && nota.destruction <= now;
   });
-  localStorage.setItem("notes", JSON.stringify(notes));
+  if (expiredNotes.length > 0) {
+    notes = notes.filter(
+      (nota) => !nota.destruction || !nota.destruction > now,
+    );
+  }
+  expiredNotes.forEach((nota) => {
+    fetch(`${API_URL}/${nota.id}`, {
+      method: "DELETE",
+    }).catch((error) => {
+      console.log(`Error al purgar nota ${nota.id} en backend: `, error);
+    });
+  });
 }
 
 function resetValues() {
