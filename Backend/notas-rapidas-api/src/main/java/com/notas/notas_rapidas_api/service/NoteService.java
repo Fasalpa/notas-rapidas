@@ -4,6 +4,7 @@ import com.notas.notas_rapidas_api.model.Note;
 import com.notas.notas_rapidas_api.repository.NoteRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class NoteService {
     }
 
     public List<Note> getAllNotes() {
-        return noteRepository.findAll();
+        return noteRepository.findAllActiveNotes(System.currentTimeMillis());
     }
 
     public Optional<Note> getNoteById(UUID id) {
@@ -35,13 +36,40 @@ public class NoteService {
         }
         return noteRepository.save(note);
     }
+
+    // Metodo de actualización para PUT
+    public Optional<Note> updateNote(UUID id, Note updatedNote) {
+        return noteRepository.findById(id).map(existingNote -> {
+            if (updatedNote.getTitle() != null) {
+                existingNote.setTitle(updatedNote.getTitle());
+            }
+            if (updatedNote.getText() != null) {
+                existingNote.setText(updatedNote.getText());
+            }
+            if (updatedNote.getColorBackground() != null) {
+                existingNote.setColorBackground(updatedNote.getColorBackground());
+            }
+            if (updatedNote.getMood() != null) {
+                existingNote.setMood(updatedNote.getMood());
+            }
+            if (updatedNote.getDestruction() != null) {
+                existingNote.setDestruction(updatedNote.getDestruction());
+            }
+            if (updatedNote.getCapsule() != null) {
+                existingNote.setCapsule(updatedNote.getCapsule());
+            }
+            return noteRepository.save(existingNote);
+        });
+    }
+
     public void deleteNote(UUID id) {
         noteRepository.deleteById(id);
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Transactional
+    @Scheduled(cron = "0 0 3 * * ?") // Ejecuta todos los días a las 3:00 AM
     public void autoDeleteExpiredNotes() {
-        Long currentTime = System.currentTimeMillis();
-        noteRepository.deleteExpiredNotes(currentTime);
+        Long now = System.currentTimeMillis();
+        noteRepository.deleteAllExpiredNotes(now);
     }
 }
