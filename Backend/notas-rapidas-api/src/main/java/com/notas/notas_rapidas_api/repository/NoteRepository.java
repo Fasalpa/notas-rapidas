@@ -17,6 +17,8 @@ public interface NoteRepository extends JpaRepository<Note, UUID> {
     List<Note> findAllActiveNotes(@Param("now") Long now);
 
     @Modifying
-    @Query("DELETE FROM Note n WHERE n.destruction IS NULL OR n.destruction <= :now")
+    @Query("DELETE FROM Note n WHERE n.destruction IS NOT NULL OR n.destruction <= :now")
     int deleteAllExpiredNotes(@Param("now") Long now);
+
+
 }

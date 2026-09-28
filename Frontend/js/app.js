@@ -417,22 +417,49 @@ modalNote.addEventListener("click", (e) => {
     closeModal();
   }
 });
-formEditNote.addEventListener("submit", (e) => {
+formEditNote.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   if (!currentEditingNoteId) {
     return;
   }
-  notes = notes.map((nota) => {
-    if (nota.id === currentEditingNoteId) {
-      return { ...nota, title: editTitle.value, text: editText.value };
+  const targetNote = notes.find((n) => n.id === currentEditingNoteId);
+  if (!targetNote) {
+    return;
+  }
+
+  const updateNote = {
+    id: currentEditingNoteId,
+    title: editTitle.value,
+    text: editText.value,
+    colorBackground: targetNote.colorBackground,
+    mood: targetNote.mood,
+    destruction: targetNote.destruction,
+    capsule: targetNote.capsule,
+    date: targetNote.date,
+  };
+
+  try {
+    const response = await fetch(`${API_URL}/${currentEditingNoteId}`, {
+      method: "PUT",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(updateNote),
+    });
+    if (response.ok) {
+      await fetchNotes();
+      closeModal();
+    } else {
+      console.error(
+        "Error al actualizar la nota en el servidor. Status:",
+        response.status,
+      );
     }
-    return nota;
-  });
+  } catch (error) {
+    console.error("Error en la petición PUT de edición", error);
+  }
+
   localStorage.setItem("notes", JSON.stringify(notes));
   renderNotes();
-
-  closeModal();
 });
 
 function deleteNote(id) {

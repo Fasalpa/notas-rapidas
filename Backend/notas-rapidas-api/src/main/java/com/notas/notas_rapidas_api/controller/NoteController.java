@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/notes")
-@CrossOrigin(origins = "*")
 public class NoteController {
 
     private final NoteService noteService;
