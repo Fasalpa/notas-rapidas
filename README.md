@@ -1,59 +1,92 @@
-# 📝 Notas Rápidas
+# 📝 Notas Rápidas API & Web App
 
-> Aplicación web interactiva para la gestión avanzada de notas personales con **Cápsulas del Tiempo** bloqueadas condicionalmente, **Autodestrucción programada en tiempo real**, seguimiento del estado de ánimo y **operaciones CRUD completas**.
+> **De ideas temporales a realidad.**  
+> Aplicación web Full Stack para crear, editar y gestionar notas temporales, con cápsulas del tiempo y autodestrucción programada.
 
-### En construcción?
+## 🚀 Características
 
-* Si, esta app sigue mejorando (**pronto implementará la versión con backend para almacenamiento en bases de datos**)
+- **Gestión CRUD:** creación, consulta, edición mediante modal y eliminación de notas.
+- **Notas activas:** el backend excluye las notas caducadas de las consultas generales.
+- **Autodestrucción:** fecha programada y contador visual en tiempo real.
+- **Purga automática:** tarea de Spring Boot que elimina notas caducadas a las 3:00 AM (*para no cargar el backend con infinitas consultas*).
+- **Cápsulas del tiempo:** bloquea el contenido hasta la fecha de apertura elegida.
+- **Personalización:** colores de fondo y seguimiento del estado de ánimo.
+- **Filtros dinámicos:** clasificación por todas las notas, ánimo y cápsulas.
 
----
+## 🛠️ Tecnologías
 
-## 🚀 Características Principales
+### Backend
+- Java 17+
+- Spring Boot, Spring Data JPA y Spring Web
+- PostgreSQL o MySQL
+- Lombok y Maven
+- Tareas programadas con `@Scheduled`
 
-* **CRUD Completo (Create, Read, Update, Delete):**
-  * **Creación:** Notas con título, contenido, personalización de color de fondo y estado de ánimo.
-  * **Lectura & Renderizado Dinámico:** Grid responsivo autoadaptable según el viewport.
-  * **Edición (Update):** Modal centrado emergente para consultar el detalle completo y modificar notas existentes.
-  * **Eliminación (Delete):** Borrado manual por nota con actualización inmediata del DOM.
-* **🔒 Cápsulas del Tiempo:**
-  * Bloqueo programado de notas mediante selección de fecha/hora.
-  * Renderizado condicional: El contenido sensible permanece protegido y la edición queda deshabilitada hasta que se cumpla la fecha de apertura.
-* **🌋 Autodestrucción Programada:**
-  * Contador en vivo (días, horas, minutos, segundos) mediante `setInterval`.
-  * Algoritmo de filtrado automático que purga y elimina de la memoria las notas expiradas.
-* **😊 Mood Tracking (Estado de Ánimo):**
-  * Slider interactivo con rangos dinámicos y cambio de color en tiempo real (de *Terrible 😫* a *Increíble 😁*).
-* **🎯 Filtros Dinámicos Non-Destructive:**
-  * Visualización categorizada (Todas, Ánimo, Cápsulas) sin mutar la fuente de datos original.
-* **💾 Persistencia de Datos:**
-  * Sincronización automática de todas las operaciones mediante `localStorage`.
+### Frontend
+- JavaScript ES6+, HTML5 y CSS3
+- Bootstrap 5
+- Diseño responsive y propiedades personalizadas de CSS
 
----
-
-## 🛠️ Tecnologías y Patrones Utilizados
-
-* **HTML5:** Marcación semántica, modales nativos y controles de formulario estructurados.
-* **CSS3 Moderno (No Media Queries):**
-  * **Layout Autoadaptable:** `grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))` para un comportamiento responsivo nativo en Mobile, Tablet y Desktop.
-  * **Tipografía y Espaciado Fluido:** Uso de funciones dinámicas `clamp()`.
-  * **Microinteracciones & Pseudoelementos:** Animaciones suaves en botones con `::before`, curvas `cubic-bezier` e `isolation: isolate` para la gestión de capas.
-  * **Diseño visual:** Variables CSS (Custom Properties), `backdrop-filter: blur()`, Flexbox y Grid.
-* **JavaScript (Vanilla - ES6+):**
-  * **Manipulación del DOM & Delegación de Eventos:** Escuchadores de eventos optimizados en contenedores principales.
-  * **Programación Asíncrona & Timers:** Gestión de temporizadores en segundo plano con `setInterval` y manipulación de fechas con la API `Date`.
-  * **Inmutabilidad y Métodos de Arreglos:** Uso extenso de `.map()`, `.filter()`, `.find()` y el operador Spread (`...`).
-  * **Identificadores Únicos:** Generación de ID mediante `crypto.randomUUID()`.
-* **Git & GitHub:** Flujo de trabajo profesional basado en la estrategia **GitFlow** (`main`, `develop`, `feature/*`).
-
----
-
-## 📁 Estrategia de Ramas (GitFlow)
-
-El desarrollo del proyecto se estructuró a través de entregas incrementales en ramas de características:
+## 📂 Estructura del proyecto
 
 ```text
-main (Producción)
-  └── develop (Integración)
-        ├── feature/button-styles        ───> Microinteracciones y CSS fluido
-        ├── feature/filters-and-polish   ───> Filtros y pulido de UI
-        └── feature/modal-and-update     ───> Modal de detalle y lógica de actualización (U)
+notas-rapidas/
+├── src/main/java/com/notas/notas_rapidas_api/
+│   ├── config/       # Configuración de CORS
+│   ├── controller/   # Endpoints REST
+│   ├── model/        # Entidades JPA
+│   ├── repository/   # Consultas de datos
+│   └── service/      # Lógica de negocio y tareas programadas
+└── Frontend/
+    ├── css/
+    ├── js/
+    └── index.html
+```
+
+## 🔌 API REST
+
+Base URL: `http://localhost:8080/api/notes`
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| `GET` | `/` | Obtiene las notas activas |
+| `GET` | `/{id}` | Obtiene una nota por su UUID |
+| `POST` | `/` | Crea una nota |
+| `PUT` | `/{id}` | Actualiza una nota |
+| `DELETE` | `/{id}` | Elimina una nota |
+
+## ⚙️ Instalación y ejecución
+
+### Requisitos
+
+- Java JDK 17 o superior
+- Maven 3.x
+- PostgreSQL o MySQL
+
+### 1. Configurar la base de datos
+
+Configura las credenciales en `src/main/resources/application.properties`. Por ejemplo, para PostgreSQL:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/notas_db
+spring.datasource.username=tu_usuario
+spring.datasource.password=tu_contraseña
+spring.jpa.hibernate.ddl-auto=update
+```
+
+### 2. Ejecutar el backend
+
+Desde la raíz del proyecto:
+
+```bash
+mvn spring-boot:run
+```
+
+### 3. Ejecutar el frontend
+
+Abre `Frontend/index.html` en el navegador o sírvelo localmente, por ejemplo, con Live Server en VS Code.
+
+## ✒️ Autor
+
+**Robinson Fabián Salamanca Palacio**  
+Desarrollador Full Stack Java y estudiante de Ingeniería de Sistemas.
