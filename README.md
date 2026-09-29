@@ -8,7 +8,7 @@
 - **Gestión CRUD:** creación, consulta, edición mediante modal y eliminación de notas.
 - **Notas activas:** el backend excluye las notas caducadas de las consultas generales.
 - **Autodestrucción:** fecha programada y contador visual en tiempo real.
-- **Purga automática:** tarea de Spring Boot que elimina notas caducadas a las 3:00 AM.
+- **Purga automática:** tarea de Spring Boot que elimina notas caducadas a las 3:00 AM (*para no cargar el backend con infinitas consultas*).
 - **Cápsulas del tiempo:** bloquea el contenido hasta la fecha de apertura elegida.
 - **Personalización:** colores de fondo y seguimiento del estado de ánimo.
 - **Filtros dinámicos:** clasificación por todas las notas, ánimo y cápsulas.
