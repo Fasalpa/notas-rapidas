@@ -8,14 +8,17 @@
 - **Gestión CRUD:** creación, consulta, edición mediante modal y eliminación de notas.
 - **Notas activas:** el backend excluye las notas caducadas de las consultas generales.
 - **Autodestrucción:** fecha programada y contador visual en tiempo real.
-- **Purga automática:** tarea de Spring Boot que elimina notas caducadas a las 3:00 AM (*para no cargar el backend con infinitas consultas*).
+- **Purga automática:** tarea de Spring Boot que elimina notas caducadas a las 3:00 AM (_para no cargar el backend con infinitas consultas_).
 - **Cápsulas del tiempo:** bloquea el contenido hasta la fecha de apertura elegida.
 - **Personalización:** colores de fondo y seguimiento del estado de ánimo.
 - **Filtros dinámicos:** clasificación por todas las notas, ánimo y cápsulas.
+- **Búsqueda & Filtros Dinámicos:** Barra de búsqueda en tiempo real (filtra por título o contenido) combinable con pestañas por categorías (_Todas_, _Ánimo_, _Cápsulas_).
+- **Notificaciones Flotantes (UX Feedback):** Sistema de alertas dinámicas (`showNotification`) que brinda retroalimentación visual al usuario ante cada acción (guardar, editar, eliminar o intentar abrir cápsulas bloqueadas).
 
 ## 🛠️ Tecnologías
 
 ### Backend
+
 - Java 17+
 - Spring Boot, Spring Data JPA y Spring Web
 - PostgreSQL o MySQL
@@ -23,6 +26,7 @@
 - Tareas programadas con `@Scheduled`
 
 ### Frontend
+
 - JavaScript ES6+, HTML5 y CSS3
 - Bootstrap 5
 - Diseño responsive y propiedades personalizadas de CSS
@@ -47,13 +51,13 @@ notas-rapidas/
 
 Base URL: `http://localhost:8080/api/notes`
 
-| Método | Endpoint | Descripción |
-|---|---|---|
-| `GET` | `/` | Obtiene las notas activas |
-| `GET` | `/{id}` | Obtiene una nota por su UUID |
-| `POST` | `/` | Crea una nota |
-| `PUT` | `/{id}` | Actualiza una nota |
-| `DELETE` | `/{id}` | Elimina una nota |
+| Método   | Endpoint | Descripción                  |
+| -------- | -------- | ---------------------------- |
+| `GET`    | `/`      | Obtiene las notas activas    |
+| `GET`    | `/{id}`  | Obtiene una nota por su UUID |
+| `POST`   | `/`      | Crea una nota                |
+| `PUT`    | `/{id}`  | Actualiza una nota           |
+| `DELETE` | `/{id}`  | Elimina una nota             |
 
 ## ⚙️ Instalación y ejecución
 
