@@ -12,6 +12,7 @@ const timeDestruction = document.getElementById("time-self-destruction");
 const capsule = document.getElementById("check-capsule");
 const timeCapsule = document.getElementById("unlock-date");
 const containerNotes = document.querySelector(".container-notes");
+const search = document.getElementById("input-search");
 const btnFilter = document.querySelectorAll(".btn-filter");
 
 // modal
@@ -23,12 +24,16 @@ const editTitle = document.getElementById("edit-title");
 const editText = document.getElementById("edit-text");
 const editDate = document.getElementById("edit-date");
 
+//mensajes
+let container = document.getElementById("toast-container");
+
 let notes = [];
 let background = "";
 let stateMind = "Neutral 😐";
 let valueTimeDestruction = "";
 let filter = "";
 let currentEditingNoteId = null;
+let searchQuery = "";
 fetchNotes();
 colorBtnNote();
 listenerDestruction();
@@ -51,15 +56,16 @@ function colorBtnNote() {
   colors.forEach((c) => {
     c.addEventListener("click", () => {
       colors.forEach((btn) => btn.classList.remove("selected"));
-      if (background === "") {
-        background = "var(--btn-lemon)";
-      } else {
-        background = getComputedStyle(c).backgroundColor;
-        c.classList.add("selected");
-      }
+      c.classList.add("selected");
+      background = getComputedStyle(c).backgroundColor;
     });
   });
 }
+
+search.addEventListener("input", (e) => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  renderNotes();
+});
 
 function filterBtn() {
   btnFilter.forEach((b) => {
@@ -186,6 +192,17 @@ function renderNotes() {
   } else {
     notesRender = notes;
   }
+  if (searchQuery !== "") {
+    notesRender = notesRender.filter((nota) => {
+      const titleMatch = nota.title
+        ? nota.title.toLowerCase().includes(searchQuery)
+        : false;
+      const textMatch = nota.text
+        ? nota.text.toLowerCase().includes(searchQuery)
+        : false;
+      return titleMatch || textMatch;
+    });
+  }
 
   if (notesRender.length === 0) {
     containerNotes.innerHTML = `
@@ -223,7 +240,7 @@ function renderNotes() {
           : "";
 
         return `
-          <article class="card-note" data-id="${nota.id}" style="background-color: ${nota.colorBackground || "var(--btn-lemon)"};">
+          <article class="card-note" data-id="${nota.id}" style="background-color: ${nota.colorBackground || nota.color_background || "var(--btn-lemon)"};">
             <div class="card-note-container">
               <h5 class="card-note-title">${nota.title}</h5>
               <button type="button" data-id="${nota.id}" class="btn-delete">🗑️</button>
@@ -259,7 +276,7 @@ form.addEventListener("submit", async (e) => {
     // id: crypto.randomUUID(), esto ya lo genera el java
     title: inputTitle.value,
     text: textArea.value,
-    colorBackground: background,
+    colorBackground: background || "var(--btn-lemon)",
     mood: stateMind,
     destruction: destructionDate,
     capsule: capsuleDate,
@@ -288,6 +305,7 @@ form.addEventListener("submit", async (e) => {
         btnSave.classList.remove("saved");
         resetValues();
       }, 2000);
+      showNotification("✨ ¡Nota guardada con éxito!", "success");
     }
   } catch (error) {
     console.log("Error ");
@@ -340,6 +358,8 @@ function resetValues() {
   timeCapsule.value = "";
   timeCapsule.disabled = true;
   btnSave.disabled = true;
+  background = "";
+  colors.forEach((btn) => btn.classList.remove("selected"));
 }
 
 containerNotes.addEventListener("click", async (e) => {
@@ -360,6 +380,7 @@ containerNotes.addEventListener("click", async (e) => {
 
       if (response.ok) {
         await fetchNotes(); // Recargamos las notas desde Spring Boot
+        showNotification("💥 Mensaje Elimninado.");
       } else {
         console.error(
           "No se pudo eliminar la nota en el servidor. Status:",
@@ -389,8 +410,8 @@ function openModal(id) {
   const isLoked =
     targetNote.capsule && new Date(targetNote.capsule).getTime() > Date.now();
   if (isLoked) {
-    alert(
-      "🔒 Esta nota no se puede editar hasta que se abra la capsula del tiempo. (recuerda que es un regalo de ti para ti 😊)",
+    showNotification(
+      "🔒 Recuerda que solo se abrirá hasta que se cumpla el tiempo.",
     );
     return;
   }
@@ -448,6 +469,7 @@ formEditNote.addEventListener("submit", async (e) => {
     if (response.ok) {
       await fetchNotes();
       closeModal();
+      showNotification("✏️ Se ha editado con éxito.");
     } else {
       console.error(
         "Error al actualizar la nota en el servidor. Status:",
@@ -466,6 +488,35 @@ function deleteNote(id) {
   notes = notes.filter((nota) => nota.id !== id);
   localStorage.setItem("notes", JSON.stringify(notes));
   renderNotes();
+}
+
+function showNotification(message, type = "success") {
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.className = "position-fixed top-0 end-0 p-3";
+    container.style.zIndex = "1100";
+    document.body.appendChild(container);
+  }
+
+  // mapear tipos a clases de Bootstrap
+  const alertType = type === "error" ? "danger" : type;
+
+  // crear alerta
+  const alertElement = document.createElement("div");
+  alertElement.className = `alert alert-${alertType} alert-dismissible fade show shadow-sm`;
+  alertElement.role = "alert";
+  alertElement.innerHTML = `
+    <span>${message}</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+
+  // agregar al contenedor
+  container.appendChild(alertElement);
+  setTimeout(() => {
+    alertElement.classList.remove("show");
+    setTimeout(() => alertElement.remove(), 150);
+  }, 3000);
 }
 
 // refrescar para la cuenta regresiva
