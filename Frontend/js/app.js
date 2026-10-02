@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080/api/notes";
+// al fin subido a render
+const API_URL = "https://notas-rapidas-api.onrender.com/api/notes";
+
 
 const form = document.getElementById("form");
 const btnSave = document.getElementById("btn-save-note");

@@ -1,94 +1,92 @@
 # 📝 Notas Rápidas API & Web App
 
-> **De ideas temporales a realidad.**  
-> Aplicación web Full Stack para crear, editar y gestionar notas temporales, con cápsulas del tiempo y autodestrucción programada.
+Aplicación web full-stack para la gestión de notas personales, construida con una arquitectura desacoplada: backend con **Spring Boot**, base de datos relacional con **PostgreSQL (Supabase)** y despliegue en la nube mediante **Render**.
 
-## 🚀 Características
+---
 
-- **Gestión CRUD:** creación, consulta, edición mediante modal y eliminación de notas.
-- **Notas activas:** el backend excluye las notas caducadas de las consultas generales.
-- **Autodestrucción:** fecha programada y contador visual en tiempo real.
-- **Purga automática:** tarea de Spring Boot que elimina notas caducadas a las 3:00 AM (_para no cargar el backend con infinitas consultas_).
-- **Cápsulas del tiempo:** bloquea el contenido hasta la fecha de apertura elegida.
-- **Personalización:** colores de fondo y seguimiento del estado de ánimo.
-- **Filtros dinámicos:** clasificación por todas las notas, ánimo y cápsulas.
-- **Búsqueda & Filtros Dinámicos:** Barra de búsqueda en tiempo real (filtra por título o contenido) combinable con pestañas por categorías (_Todas_, _Ánimo_, _Cápsulas_).
-- **Notificaciones Flotantes (UX Feedback):** Sistema de alertas dinámicas (`showNotification`) que brinda retroalimentación visual al usuario ante cada acción (guardar, editar, eliminar o intentar abrir cápsulas bloqueadas).
+## 🚀 Demo en Vivo / Producción
 
-## 🛠️ Tecnologías
+* **Backend API (Render):** `https://notas-rapidas-api.onrender.com`
+* **Endpoint Principal:** `https://notas-rapidas-api.onrender.com/api/notes`
+
+---
+
+## 🛠️ Tecnologías Utilizadas
 
 ### Backend
-
-- Java 17+
-- Spring Boot, Spring Data JPA y Spring Web
-- PostgreSQL o MySQL
-- Lombok y Maven
-- Tareas programadas con `@Scheduled`
+* **Java 21**
+* **Spring Boot 3** (Spring Data JPA, Spring Web)
+* **Maven** (Gestión de dependencias)
+* **PostgreSQL / Supabase** (Base de datos relacional)
+* **Docker** (Containerización para el despliegue)
 
 ### Frontend
+* **HTML5 / CSS3 / JavaScript (ES6+)**
+* **Fetch API** (Consumo de servicios RESTful)
 
-- JavaScript ES6+, HTML5 y CSS3
-- Bootstrap 5
-- Diseño responsive y propiedades personalizadas de CSS
+### Infraestructura y Despliegue
+* **Render** (Servicio web basado en contenedor Docker)
+* **Supabase** (Servicio de PostgreSQL administrado)
 
-## 📂 Estructura del proyecto
+---
+
+## 🔐 Configuración de Variables de Entorno
+
+Por buenas prácticas de seguridad, ninguna credencial o contraseña está harcodeada en el repositorio. Para ejecutar el backend localmente o desplegarlo, se requieren las siguientes variables de entorno:
+
+| Variable | Descripción | Ejemplo |
+| :--- | :--- | :--- |
+| `SPRING_DATASOURCE_URL` | URL JDBC de conexión a PostgreSQL | `jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres?sslmode=require` |
+| `SPRING_DATASOURCE_USERNAME` | Usuario de la base de datos | `postgres.xxxxxx` |
+| `SPRING_DATASOURCE_PASSWORD` | Contraseña de la base de datos | `tu_contraseña_segura` |
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```text
 notas-rapidas/
-├── src/main/java/com/notas/notas_rapidas_api/
-│   ├── config/       # Configuración de CORS
-│   ├── controller/   # Endpoints REST
-│   ├── model/        # Entidades JPA
-│   ├── repository/   # Consultas de datos
-│   └── service/      # Lógica de negocio y tareas programadas
-└── Frontend/
-    ├── css/
-    ├── js/
-    └── index.html
+├── Backend/
+│   └── notas-rapidas-api/
+│       ├── src/
+│       ├── Dockerfile           # Configuración de compilación multicapa (Java 21 + Maven)
+│       ├── pom.xml
+│       └── application.properties
+├── Frontend/
+│   ├── index.html
+│   ├── css/
+│   └── js/
+└── README.md
 ```
 
-## 🔌 API REST
+## ⚙️ Ejecución Local
 
-Base URL: `http://localhost:8080/api/notes`
-
-| Método   | Endpoint | Descripción                  |
-| -------- | -------- | ---------------------------- |
-| `GET`    | `/`      | Obtiene las notas activas    |
-| `GET`    | `/{id}`  | Obtiene una nota por su UUID |
-| `POST`   | `/`      | Crea una nota                |
-| `PUT`    | `/{id}`  | Actualiza una nota           |
-| `DELETE` | `/{id}`  | Elimina una nota             |
-
-## ⚙️ Instalación y ejecución
-
-### Requisitos
-
-- Java JDK 17 o superior
-- Maven 3.x
-- PostgreSQL o MySQL
-
-### 1. Configurar la base de datos
-
-Configura las credenciales en `src/main/resources/application.properties`. Por ejemplo, para PostgreSQL:
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/notas_db
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
-spring.jpa.hibernate.ddl-auto=update
-```
-
-### 2. Ejecutar el backend
-
-Desde la raíz del proyecto:
+### 1. Clonar el repositorio
 
 ```bash
-mvn spring-boot:run
+git clone https://github.com/Fasalpa/notas-rapidas.git
+cd notas-rapidas/Backend/notas-rapidas-api
 ```
 
-### 3. Ejecutar el frontend
+### 2. Configurar variables de entorno
 
-Abre `Frontend/index.html` en el navegador o sírvelo localmente, por ejemplo, con Live Server en VS Code.
+Configura en tu IDE (IntelliJ IDEA / VS Code) o en tu terminal las variables `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` y `SPRING_DATASOURCE_PASSWORD`.
+
+### 3. Ejecutar la aplicación
+
+```bash
+./mvnw spring-boot:run
+```
+
+La API estará disponible localmente en `http://localhost:8080/api/notes`.
+
+## 📡 Endpoints de la API
+
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/api/notes` | Obtener todas las notas |
+| `POST` | `/api/notes` | Crear una nueva nota |
+| `DELETE` | `/api/notes/{id}` | Eliminar una nota por ID |
 
 ## ✒️ Autor
 
