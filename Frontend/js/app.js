@@ -46,7 +46,7 @@ filterBtn();
 
 async function fetchNotes() {
   try {
-    const response = await fetch("http://localhost:8080/api/notes");
+    const response = await fetch(API_URL);
     notes = await response.json();
     renderNotes();
   } catch (error) {
@@ -288,7 +288,7 @@ form.addEventListener("submit", async (e) => {
   // localStorage.setItem("notes", JSON.stringify(notes));
 
   try {
-    const response = await fetch("http://localhost:8080/api/notes", {
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -376,7 +376,7 @@ containerNotes.addEventListener("click", async (e) => {
     const id = btnDelete.dataset.id;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/notes/${id}`, {
+      const response = await fetch(`${API_URL}${id}`, {
         method: "DELETE",
       });
 
