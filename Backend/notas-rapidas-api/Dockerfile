@@ -5,8 +5,8 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-#ejecutar
-FROM eclipse-temurin-17-jre
+# ejecutar la aplicación Java
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
