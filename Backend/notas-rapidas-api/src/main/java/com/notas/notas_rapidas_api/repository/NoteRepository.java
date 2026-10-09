@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface NoteRepository extends JpaRepository<Note, UUID> {
+public interface NoteRepository extends JpaRepository<Note, Long> {
 
     @Query("SELECT n FROM Note n WHERE n.destruction IS NULL OR n.destruction > :now")
     List<Note> findAllActiveNotes(@Param("now") Long now);
@@ -21,6 +21,6 @@ public interface NoteRepository extends JpaRepository<Note, UUID> {
     int deleteAllExpiredNotes(@Param("now") Long now);
 
     //buscamoss solo las notas de x usuario
-    List<Note> findByUserId(Long id);
+    List<Note> findByUserId(Long userId);
 
 }

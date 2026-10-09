@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -12,7 +11,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
-public class jwtUtil {
+public class JwtUtil {
     private static final String SECRET_KEY_STRING = "MiClaveSecretaSuperSeguraParaNotasRapidas123456";
     private final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
 

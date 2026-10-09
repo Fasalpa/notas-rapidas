@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public class Note{
     @Id
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String title;
