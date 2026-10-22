@@ -601,3 +601,5 @@ setInterval(() => {
   destroyExpiredNotes();
   renderNotes();
 }, 1000);
+
+window.switchTab = switchTab;
