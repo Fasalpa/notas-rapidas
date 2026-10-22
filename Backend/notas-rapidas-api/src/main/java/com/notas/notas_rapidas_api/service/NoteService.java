@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class NoteService {
@@ -23,22 +22,21 @@ public class NoteService {
         return noteRepository.findAllActiveNotes(System.currentTimeMillis());
     }
 
-    public Optional<Note> getNoteById(UUID id) {
+    // Cambiado UUID por Long
+    public Optional<Note> getNoteById(Long id) {
         return noteRepository.findById(id);
     }
 
     public Note saveNote(Note note) {
-        if (note.getId() == null) {
-            note.setId(UUID.randomUUID());
-        }
+        // En Long no se asigna UUID.randomUUID(), la BD se encarga de asignar el ID autoincrementable.
         if (note.getDate() == null) {
             note.setDate(System.currentTimeMillis());
         }
         return noteRepository.save(note);
     }
 
-    // Metodo de actualización para PUT
-    public Optional<Note> updateNote(UUID id, Note updatedNote) {
+    // Método de actualización para PUT (Cambiado UUID por Long)
+    public Optional<Note> updateNote(Long id, Note updatedNote) {
         return noteRepository.findById(id).map(existingNote -> {
             if (updatedNote.getTitle() != null) {
                 existingNote.setTitle(updatedNote.getTitle());
@@ -62,7 +60,8 @@ public class NoteService {
         });
     }
 
-    public void deleteNote(UUID id) {
+    // Cambiado UUID por Long
+    public void deleteNote(Long id) {
         noteRepository.deleteById(id);
     }
 
