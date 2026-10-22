@@ -31,7 +31,7 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     // Endpoint de registro
-    @PostMapping("/register")
+    @PostMapping("/ ")
     public ResponseEntity<?> register(@RequestBody AuthRequest authRequest) {
         if (userRepository.existsByEmail(authRequest.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
