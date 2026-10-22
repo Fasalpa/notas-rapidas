@@ -77,14 +77,17 @@ async function fetchNotes() {
       return;
     }
 
-    // se asigna a la variable global notes
+    if (!response.ok) {
+      console.error("Respuesta no válida del servidor:", response.status);
+      return;
+    }
+
     notes = await response.json();
     renderNotes();
   } catch (error) {
     console.error("Error al traer las notas:", error);
   }
 }
-
 // crear la nota
 async function createNote(noteData) {
   try {
@@ -221,6 +224,28 @@ function checkAuthState() {
   } else {
     if (authModal) authModal.style.display = "flex";
     if (userBar) userBar.style.display = "none";
+  }
+}
+
+function switchTab(tab) {
+  const formLogin = document.getElementById("form-login");
+  const formRegister = document.getElementById("form-register");
+  const tabLogin = document.getElementById("tab-login");
+  const tabRegister = document.getElementById("tab-register");
+  const errorMsg = document.getElementById("auth-error");
+
+  if (errorMsg) errorMsg.style.display = "none";
+
+  if (tab === "login") {
+    if (formLogin) formLogin.style.display = "flex";
+    if (formRegister) formRegister.style.display = "none";
+    if (tabLogin) tabLogin.classList.add("active");
+    if (tabRegister) tabRegister.classList.remove("active");
+  } else {
+    if (formLogin) formLogin.style.display = "none";
+    if (formRegister) formRegister.style.display = "flex";
+    if (tabRegister) tabRegister.classList.add("active");
+    if (tabLogin) tabLogin.classList.remove("active");
   }
 }
 
