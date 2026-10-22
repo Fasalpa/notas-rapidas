@@ -1,6 +1,6 @@
-// al fin subido a render
-const API_URL = "https://notas-rapidas-api.onrender.com/api/notes";
-
+const API_BASE_URL = "https://notas-rapidas-api.onrender.com/api";
+const API_NOTES = `${API_BASE_URL}/notes`;
+const API_AUTH = `${API_BASE_URL}/auth`;
 
 const form = document.getElementById("form");
 const btnSave = document.getElementById("btn-save-note");
@@ -26,33 +26,213 @@ const editTitle = document.getElementById("edit-title");
 const editText = document.getElementById("edit-text");
 const editDate = document.getElementById("edit-date");
 
-//mensajes
+// mensajes
 let container = document.getElementById("toast-container");
 
 let notes = [];
 let background = "";
 let stateMind = "Neutral 😐";
-let valueTimeDestruction = "";
 let filter = "";
 let currentEditingNoteId = null;
 let searchQuery = "";
-fetchNotes();
-colorBtnNote();
-listenerDestruction();
-listenerCapsule();
-validationText();
-renderNotes();
-filterBtn();
 
+// inicialización de la app
+document.addEventListener("DOMContentLoaded", () => {
+  colorBtnNote();
+  listenerDestruction();
+  listenerCapsule();
+  validationText();
+  filterBtn();
+  checkAuthState();
+});
+
+// helper de Tokens
+function getToken() {
+  return localStorage.getItem("jwt_token");
+}
+
+function getAuthHeaders() {
+  const token = getToken();
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+// logica del http con el back /render +jwt
+
+// obtener notas
 async function fetchNotes() {
+  const token = getToken();
+  if (!token) return;
+
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(API_NOTES, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      logout();
+      return;
+    }
+
+    // se asigna a la variable global notes
     notes = await response.json();
     renderNotes();
   } catch (error) {
     console.error("Error al traer las notas:", error);
   }
 }
+
+// crear la nota
+async function createNote(noteData) {
+  try {
+    const response = await fetch(API_NOTES, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(noteData),
+    });
+
+    if (response.ok) {
+      await fetchNotes();
+
+      const textoOriginal = btnSave.textContent;
+      btnSave.textContent = "Guardada!";
+      btnSave.classList.add("saved");
+
+      setTimeout(() => {
+        btnSave.textContent = textoOriginal;
+        btnSave.classList.remove("saved");
+        resetValues();
+      }, 2000);
+      showNotification("✨ ¡Nota guardada con éxito!", "success");
+    } else {
+      showNotification("Error al guardar la nota.", "error");
+    }
+  } catch (error) {
+    console.error("Error al crear la nota: ", error);
+  }
+}
+
+// eliminar nota
+async function deleteNote(id) {
+  try {
+    const response = await fetch(`${API_NOTES}/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.ok) {
+      await fetchNotes();
+      showNotification("💥 Nota eliminada con éxito.");
+    } else {
+      console.error("No se pudo eliminar la nota. Status:", response.status);
+    }
+  } catch (error) {
+    console.error("Error al eliminar la nota:", error);
+  }
+}
+
+// editar nota (PUT)
+async function updateNote(id, updatedData) {
+  try {
+    const response = await fetch(`${API_NOTES}/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.ok) {
+      await fetchNotes();
+      closeModal();
+      showNotification("✏️ Se ha editado con éxito.");
+    } else {
+      console.error("Error al actualizar la nota. Status:", response.status);
+    }
+  } catch (error) {
+    console.error("Error en la petición PUT de edición:", error);
+  }
+}
+
+// logica de la autenticacion- login, regisstro y logout
+
+async function login(email, password) {
+  try {
+    const response = await fetch(`${API_AUTH}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) throw new Error("Credenciales incorrectas");
+
+    const data = await response.json();
+    localStorage.setItem("jwt_token", data.token);
+    localStorage.setItem("user_email", data.email);
+
+    checkAuthState();
+  } catch (error) {
+    showAuthError("Correo o contraseña incorrectos.");
+  }
+}
+
+async function register(name, email, password) {
+  try {
+    const response = await fetch(`${API_AUTH}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(errText);
+    }
+
+    const data = await response.json();
+    localStorage.setItem("jwt_token", data.token);
+    localStorage.setItem("user_email", data.email);
+
+    checkAuthState();
+  } catch (error) {
+    showAuthError(error.message || "Error al registrar el usuario.");
+  }
+}
+
+function logout() {
+  localStorage.removeItem("jwt_token");
+  localStorage.removeItem("user_email");
+  checkAuthState();
+}
+
+function checkAuthState() {
+  const token = getToken();
+  const authModal = document.getElementById("auth-modal");
+  const userBar = document.getElementById("user-bar");
+  const userEmailDisplay = document.getElementById("user-email-display");
+
+  if (token) {
+    if (authModal) authModal.style.display = "none";
+    if (userBar) userBar.style.display = "flex";
+    if (userEmailDisplay)
+      userEmailDisplay.textContent = localStorage.getItem("user_email");
+    fetchNotes();
+  } else {
+    if (authModal) authModal.style.display = "flex";
+    if (userBar) userBar.style.display = "none";
+  }
+}
+
+function showAuthError(msg) {
+  const errorMsg = document.getElementById("auth-error");
+  if (errorMsg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = "block";
+  }
+}
+
+// manipulamos el DOM
 
 function colorBtnNote() {
   colors.forEach((c) => {
@@ -72,21 +252,14 @@ search.addEventListener("input", (e) => {
 function filterBtn() {
   btnFilter.forEach((b) => {
     b.addEventListener("click", () => {
-      console.log(b);
-
       if (b.textContent === "Todas") {
         filter = "all";
-        console.log("all");
-        renderNotes();
       } else if (b.textContent === "Ánimo") {
-        console.log("mood");
         filter = "mood";
-        renderNotes();
       } else {
-        console.log("capsule");
         filter = "capsule";
-        renderNotes();
       }
+      renderNotes();
     });
   });
 }
@@ -104,34 +277,29 @@ moodSlider.addEventListener("input", () => {
   } else if (valueMood < 42.82) {
     moodValue.textContent = "Ligeramente mal 😕";
     stateMind = moodValue.textContent;
-
     moodSlider.style.setProperty("--mood-color", "var(--ligeramente-mal)");
   } else if (valueMood < 57.12) {
     moodValue.textContent = "Neutral 😐";
     stateMind = moodValue.textContent;
-
     moodSlider.style.setProperty("--mood-color", "var(--neutral)");
   } else if (valueMood < 71.4) {
     moodValue.textContent = "Ligeramente bien 🙂";
     stateMind = moodValue.textContent;
-
     moodSlider.style.setProperty("--mood-color", "var(--ligeramente-bien)");
   } else if (valueMood < 85.68) {
     moodValue.textContent = "Bien 😊";
     stateMind = moodValue.textContent;
-
     moodSlider.style.setProperty("--mood-color", "var(--bien)");
   } else {
     moodValue.textContent = "Increible 😁";
     stateMind = moodValue.textContent;
-
     moodSlider.style.setProperty("--mood-color", "var(--increible)");
   }
 });
 
 function listenerDestruction() {
   destruction.addEventListener("change", () => {
-    if (destruction.checked == true) {
+    if (destruction.checked) {
       timeDestruction.disabled = false;
       capsule.disabled = true;
     } else {
@@ -143,7 +311,7 @@ function listenerDestruction() {
 
 function listenerCapsule() {
   capsule.addEventListener("change", () => {
-    if (capsule.checked == true) {
+    if (capsule.checked) {
       timeCapsule.disabled = false;
       destruction.disabled = true;
     } else {
@@ -155,27 +323,23 @@ function listenerCapsule() {
 
 function validationText() {
   inputTitle.addEventListener("input", () => {
-    if (inputTitle.value !== "") {
-      textArea.addEventListener("input", () => {
-        if (textArea.value !== "") {
-          btnSave.disabled = false;
-        }
-      });
-    } else {
-      btnSave.disabled = true;
-    }
+    btnSave.disabled = !(
+      inputTitle.value.trim() !== "" && textArea.value.trim() !== ""
+    );
+  });
+  textArea.addEventListener("input", () => {
+    btnSave.disabled = !(
+      inputTitle.value.trim() !== "" && textArea.value.trim() !== ""
+    );
   });
 }
 
 function getDestructionBadge(destructionTime) {
-  if (!destructionTime) {
-    return "";
-  }
+  if (!destructionTime) return "";
   const diffSeconds = Math.max(
     0,
     Math.floor((destructionTime - Date.now()) / 1000),
   );
-
   const minutes = Math.floor(diffSeconds / 60)
     .toString()
     .padStart(2, "0");
@@ -191,9 +355,8 @@ function renderNotes() {
     notesRender = notes.filter((nota) => nota.capsule !== null);
   } else if (filter === "mood") {
     notesRender = notes.filter((nota) => nota.mood !== "Neutral 😐");
-  } else {
-    notesRender = notes;
   }
+
   if (searchQuery !== "") {
     notesRender = notesRender.filter((nota) => {
       const titleMatch = nota.title
@@ -217,7 +380,6 @@ function renderNotes() {
   } else {
     containerNotes.innerHTML = notesRender
       .map((nota) => {
-        // cápsula de tiempo
         const validationDateCapsule = Boolean(nota.capsule);
         const unlockTime = new Date(nota.capsule).getTime();
         const now = Date.now();
@@ -233,10 +395,7 @@ function renderNotes() {
             : `<span class="capsule-badge unlocked">🔓 Cápsula Abierta</span>`
           : "";
 
-        // autodestrucción
-
         const hasDestruction = Boolean(nota.destruction);
-
         const timeToShow = hasDestruction
           ? `<p class="destruction-badge">Destrucción: ${getDestructionBadge(nota.destruction)}</p>`
           : "";
@@ -255,7 +414,6 @@ function renderNotes() {
               ${capsuleStatusHTML}
               ${timeToShow}
             </div>
-            
             <div class="card-note-meta">
               <span class="card-note-mood-label">Ánimo</span>
               <span class="card-note-mood-badge">${nota.mood || "Neutral 😐"}</span>
@@ -266,6 +424,7 @@ function renderNotes() {
   }
 }
 
+// formulario de creación
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const capsuleDate = capsule.checked ? timeCapsule.value : null;
@@ -275,78 +434,90 @@ form.addEventListener("submit", async (e) => {
       : null;
 
   const newNote = {
-    // id: crypto.randomUUID(), esto ya lo genera el java
     title: inputTitle.value,
     text: textArea.value,
     colorBackground: background || "var(--btn-lemon)",
     mood: stateMind,
     destruction: destructionDate,
     capsule: capsuleDate,
-    // date: Date.now(), esto ya lo genera el java
   };
-  // notes.push(newNote);
-  // localStorage.setItem("notes", JSON.stringify(notes));
 
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newNote),
-    });
-    if (response.ok) {
-      await fetchNotes();
+  await createNote(newNote);
+});
 
-      const textoOriginal = btnSave.textContent;
-      btnSave.textContent = "Guardada!";
-      btnSave.classList.add("saved");
+// editar las cards y eeliminarlas
+containerNotes.addEventListener("click", async (e) => {
+  const btnDelete = e.target.closest(".btn-delete");
 
-      setTimeout(() => {
-        btnSave.textContent = textoOriginal;
-        btnSave.classList.remove("saved");
-        resetValues();
-      }, 2000);
-      showNotification("✨ ¡Nota guardada con éxito!", "success");
-    }
-  } catch (error) {
-    console.log("Error ");
+  if (btnDelete) {
+    e.stopPropagation();
+    e.preventDefault();
+    const id = btnDelete.dataset.id;
+    await deleteNote(id);
+    return;
+  }
+
+  const card = e.target.closest(".card-note");
+  if (card) {
+    const noteId = card.dataset.id;
+    openModal(noteId);
   }
 });
 
-function timeRemaining(timeStamp) {
-  const difference = timeStamp - Date.now();
+// modal desplegado de editar
+function openModal(id) {
+  const targetNote = notes.find((n) => n.id == id);
+  if (!targetNote) return;
 
-  if (difference <= 0) {
-    return "🌋 Nota destruida";
-  }
-  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((difference / (1000 * 60)) % 60);
-  const seconds = Math.floor((difference / 1000) % 60);
-
-  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-}
-
-function destroyExpiredNotes() {
-  const now = Date.now();
-
-  const expiredNotes = notes.filter((nota) => {
-    nota.destruction && nota.destruction <= now;
-  });
-  if (expiredNotes.length > 0) {
-    notes = notes.filter(
-      (nota) => !nota.destruction || !nota.destruction > now,
+  const isLocked =
+    targetNote.capsule && new Date(targetNote.capsule).getTime() > Date.now();
+  if (isLocked) {
+    showNotification(
+      "🔒 Recuerda que solo se abrirá hasta que se cumpla el tiempo.",
     );
+    return;
   }
-  expiredNotes.forEach((nota) => {
-    fetch(`${API_URL}/${nota.id}`, {
-      method: "DELETE",
-    }).catch((error) => {
-      console.log(`Error al purgar nota ${nota.id} en backend: `, error);
-    });
-  });
+
+  currentEditingNoteId = id;
+  editTitle.value = targetNote.title;
+  editText.value = targetNote.text;
+  editDate.textContent = `Creada: ${new Date(targetNote.date).toLocaleString()}`;
+
+  modalNote.classList.remove("hidden");
 }
+
+function closeModal() {
+  modalNote.classList.add("hidden");
+  currentEditingNoteId = null;
+}
+
+btnCloseModal.addEventListener("click", closeModal);
+btnCancelEdit.addEventListener("click", closeModal);
+
+modalNote.addEventListener("click", (e) => {
+  if (e.target === modalNote) closeModal();
+});
+
+formEditNote.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!currentEditingNoteId) return;
+
+  const targetNote = notes.find((n) => n.id == currentEditingNoteId);
+  if (!targetNote) return;
+
+  const updatedNote = {
+    id: currentEditingNoteId,
+    title: editTitle.value,
+    text: editText.value,
+    colorBackground: targetNote.colorBackground,
+    mood: targetNote.mood,
+    destruction: targetNote.destruction,
+    capsule: targetNote.capsule,
+    date: targetNote.date,
+  };
+
+  await updateNote(currentEditingNoteId, updatedNote);
+});
 
 function resetValues() {
   inputTitle.value = "";
@@ -364,134 +535,6 @@ function resetValues() {
   colors.forEach((btn) => btn.classList.remove("selected"));
 }
 
-containerNotes.addEventListener("click", async (e) => {
-  //detectamos el botón de eliminar o su contenido
-  const btnDelete = e.target.closest(".btn-delete");
-
-  if (btnDelete) {
-    // detenemos la propagación para que no active la tarjeta ni el modal
-    e.stopPropagation();
-    e.preventDefault();
-
-    const id = btnDelete.dataset.id;
-
-    try {
-      const response = await fetch(`${API_URL}${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        await fetchNotes(); // Recargamos las notas desde Spring Boot
-        showNotification("💥 Mensaje Elimninado.");
-      } else {
-        console.error(
-          "No se pudo eliminar la nota en el servidor. Status:",
-          response.status,
-        );
-      }
-    } catch (error) {
-      console.error("Error al eliminar la nota:", error);
-    }
-
-    return;
-  }
-
-  //si el clic no fue en el botón de eliminar, abrimos el modal
-  const card = e.target.closest(".card-note");
-  if (card) {
-    const noteId = card.dataset.id;
-    openModal(noteId);
-  }
-});
-
-function openModal(id) {
-  const targetNote = notes.find((n) => n.id === id);
-  if (!targetNote) {
-    return;
-  }
-  const isLoked =
-    targetNote.capsule && new Date(targetNote.capsule).getTime() > Date.now();
-  if (isLoked) {
-    showNotification(
-      "🔒 Recuerda que solo se abrirá hasta que se cumpla el tiempo.",
-    );
-    return;
-  }
-
-  currentEditingNoteId = id;
-
-  editTitle.value = targetNote.title;
-  editText.value = targetNote.text;
-  editDate.textContent = `Creada: ${new Date(targetNote.date).toLocaleString()}`;
-
-  modalNote.classList.remove("hidden");
-}
-
-function closeModal() {
-  modalNote.classList.add("hidden");
-  currentEditingNoteId = null;
-}
-
-btnCloseModal.addEventListener("click", closeModal);
-btnCancelEdit.addEventListener("click", closeModal);
-
-modalNote.addEventListener("click", (e) => {
-  if (e.target === modalNote) {
-    closeModal();
-  }
-});
-formEditNote.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  if (!currentEditingNoteId) {
-    return;
-  }
-  const targetNote = notes.find((n) => n.id === currentEditingNoteId);
-  if (!targetNote) {
-    return;
-  }
-
-  const updateNote = {
-    id: currentEditingNoteId,
-    title: editTitle.value,
-    text: editText.value,
-    colorBackground: targetNote.colorBackground,
-    mood: targetNote.mood,
-    destruction: targetNote.destruction,
-    capsule: targetNote.capsule,
-    date: targetNote.date,
-  };
-
-  try {
-    const response = await fetch(`${API_URL}/${currentEditingNoteId}`, {
-      method: "PUT",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify(updateNote),
-    });
-    if (response.ok) {
-      await fetchNotes();
-      closeModal();
-      showNotification("✏️ Se ha editado con éxito.");
-    } else {
-      console.error(
-        "Error al actualizar la nota en el servidor. Status:",
-        response.status,
-      );
-    }
-  } catch (error) {
-    console.error("Error en la petición PUT de edición", error);
-  }
-
-  localStorage.setItem("notes", JSON.stringify(notes));
-  renderNotes();
-});
-
-function deleteNote(id) {
-  notes = notes.filter((nota) => nota.id !== id);
-  localStorage.setItem("notes", JSON.stringify(notes));
-  renderNotes();
-}
-
 function showNotification(message, type = "success") {
   if (!container) {
     container = document.createElement("div");
@@ -501,10 +544,7 @@ function showNotification(message, type = "success") {
     document.body.appendChild(container);
   }
 
-  // mapear tipos a clases de Bootstrap
   const alertType = type === "error" ? "danger" : type;
-
-  // crear alerta
   const alertElement = document.createElement("div");
   alertElement.className = `alert alert-${alertType} alert-dismissible fade show shadow-sm`;
   alertElement.role = "alert";
@@ -513,7 +553,6 @@ function showNotification(message, type = "success") {
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   `;
 
-  // agregar al contenedor
   container.appendChild(alertElement);
   setTimeout(() => {
     alertElement.classList.remove("show");
@@ -521,7 +560,18 @@ function showNotification(message, type = "success") {
   }, 3000);
 }
 
-// refrescar para la cuenta regresiva
+// limpiar las notas autodestruidas
+function destroyExpiredNotes() {
+  const now = Date.now();
+  const expiredNotes = notes.filter(
+    (nota) => nota.destruction && nota.destruction <= now,
+  );
+
+  expiredNotes.forEach((nota) => {
+    deleteNote(nota.id);
+  });
+}
+
 setInterval(() => {
   destroyExpiredNotes();
   renderNotes();

@@ -183,14 +183,60 @@
       </div>
     </div>
     <!-- contenedor flotante -->
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
-  <div id="liveToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="toast-message">
+    <div
+      class="toast-container position-fixed top-0 end-0 p-3"
+      style="z-index: 1100"
+    >
+      <div
+        id="liveToast"
+        class="toast align-items-center text-white border-0"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div class="toast-body" id="toast-message"></div>
+          <button
+            type="button"
+            class="btn-close btn-close-white me-2 m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
       </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
-  </div>  
+
+    
+<!-- modal para autenticcar -->
+<div id="auth-modal" class="modal-overlay">
+  <div class="modal-content-login">
+    
+    <!-- pestañas para alternar -->
+    <div class="auth-tabs">
+      <button id="tab-login" class="tab-btn active" onclick="switchTab('login')">Iniciar Sesión</button>
+      <button id="tab-register" class="tab-btn" onclick="switchTab('register')">Registrarse</button>
+    </div>
+
+    <!-- formulario del login -->
+    <form id="form-login" onsubmit="handleLogin(event)">
+      <h3>Te damos la bienvenida</h3>
+      <input type="email" id="login-email" placeholder="Correo electrónico" required />
+      <input type="password" id="login-password" placeholder="Contraseña" required />
+      <button type="submit" class="btn-primary" id="btn-login">Ingresar</button>
+    </form>
+
+    <!-- formulario para registro -->
+    <form id="form-register" onsubmit="handleRegister(event)" style="display: none;">
+      <h3>Crear Cuenta</h3>
+      <input type="text" id="register-name" placeholder="Nombre completo" required />
+      <input type="email" id="register-email" placeholder="Correo electrónico" required />
+      <input type="password" id="register-password" placeholder="Contraseña" required />
+      <button type="submit" class="btn-primary" id="btn-register">Registrarse</button>
+    </form>
+
+    <!-- mensaje de error -->
+    <p id="auth-error" class="auth-error-msg" style="display: none;"></p>
+  </div>
 </div>
     <script src="./js/app.js"></script>
   </body>

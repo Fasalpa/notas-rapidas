@@ -1,9 +1,6 @@
 package com.notas.notas_rapidas_api.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +16,7 @@ import java.util.UUID;
 
 public class Note{
     @Id
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String title;
@@ -36,7 +33,19 @@ public class Note{
     @Column(nullable = false)
     private Long date;
 
-//    public Note(){
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+//    public Note(){ esto es todo si lo hago manualmente
 //    }
 //
 //    public Note(UUID id, String title, String text, String colorBackground, String mood, Long destruction, String capsule, Long date){
