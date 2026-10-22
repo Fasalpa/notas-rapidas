@@ -1,4 +1,7 @@
 const API_URL = "http://localhost:8080/api/notes";
+const API_BASE_URL = "https://notas-rapidas-api.onrender.com/api";
+const API_NOTES = `${API_BASE_URL}/notes`;
+const API_AUTH = `${API_BASE_URL}/auth`;
 
 const form = document.getElementById("form");
 const btnSave = document.getElementById("btn-save-note");
@@ -42,15 +45,187 @@ validationText();
 renderNotes();
 filterBtn();
 
+//cargamo lo que viene a continuación
+document.addEventListener("DOMContentLoaded", () => {
+  checkAuthState();
+});
+
+// logica de creación, borrado y traída por token
+// traer notass por el token
 async function fetchNotes() {
+  const token = getToken();
+  if (!token) return;
+
   try {
-    const response = await fetch("http://localhost:8080/api/notes");
-    notes = await response.json();
-    renderNotes();
+    const response = await fetch(API_NOTES, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      // esto es para el token expirado o invaliodo
+      logout();
+      return;
+    }
+
+    const notes = await response.json();
+    renderNotes(notes);
   } catch (error) {
     console.error("Error al traer las notas:", error);
   }
 }
+
+// crear notas
+async function createNote(noteData) {
+  try {
+    const response = await fetch(API_NOTES, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(noteData),
+    });
+
+    if (!response.ok) {
+      fetchNotes();
+    }
+  } catch (error) {
+    console.log("Error al crear la nota: ", error);
+  }
+}
+
+// borrar nnotas
+async function deleteNote(id) {
+  try {
+    const response = await fetch(`${API_NOTES}/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.ok) {
+      fetchNotes();
+    }
+  } catch (error) {
+    console.log("Error al eliminar la nota", error);
+  }
+}
+
+//logica del login, registro y logout
+//iniciamos sesión
+async function login(email, password) {
+  try {
+    const response = await fetch(`${API_AUTH}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!response.ok) {
+      throw new Error("Credenciales incorrectas");
+    }
+
+    const data = await response.json();
+    localStorage.setItem("jwt_token", data.token);
+    localStorage.setItem("user_email", data.email);
+    
+    checkAuthState();
+  } catch (error) {
+    showAuthError("Correo o contraseña incorrectos.");
+  }
+}
+
+//ahora nos registramos
+
+async function register(name, email, password) {
+  try {
+    const response = await fetch(`${API_AUTH}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(errText);
+    }
+
+    const data = await response.json();
+    localStorage.setItem("jwt_token", data.token);
+    localStorage.setItem("user_email", data.email);
+
+    checkAuthState();
+  } catch (error) {
+    showAuthError(error.message || "Error al registrar el usuario.");
+  }
+}
+
+//ahora nos registramos 
+function logout(){
+  localStorage.removeItem("jwt_token");
+  localStorage.removeItem("user_email");
+  checkAuthState();
+}
+
+  
+function switchTab(tab) {
+  const formLogin = document.getElementById("form-login");
+  const formRegister = document.getElementById("form-register");
+  const tabLogin = document.getElementById("tab-login");
+  const tabRegister = document.getElementById("tab-register");
+  const errorMsg = document.getElementById("auth-error");
+
+  errorMsg.style.display = "none";
+
+  if (tab === "login") {
+    formLogin.style.display = "flex";
+    formRegister.style.display = "none";
+    tabLogin.classList.add("active");
+    tabRegister.classList.remove("active");
+  } else {
+    formLogin.style.display = "none";
+    formRegister.style.display = "flex";
+    tabRegister.classList.add("active");
+    tabLogin.classList.remove("active");
+  }
+}
+
+
+function checkAuthState() {
+  const token = getToken();
+  const authModal = document.getElementById("auth-modal");
+  const userBar = document.getElementById("user-bar");
+  const userEmailDisplay = document.getElementById("user-email-display");
+
+  if (token) {
+    if (authModal) authModal.style.display = "none";
+    if (userBar) userBar.style.display = "flex";
+    if (userEmailDisplay) userEmailDisplay.textContent = localStorage.getItem("user_email");
+    
+    fetchNotes(); // cargamos las notas del usuario autenticado
+  } else {
+    // si no hay token mostramos el modal que bloquea
+    if (authModal) authModal.style.display = "flex";
+    if (userBar) userBar.style.display = "none";
+  }
+}
+
+
+// handlers para el submit
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+  await login(email, password);
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById("register-name").value;
+  const email = document.getElementById("register-email").value;
+  const password = document.getElementById("register-password").value;
+  await register(name, email, password);
+}
+
+
+// logica de las cards y sus visuales
 
 function colorBtnNote() {
   colors.forEach((c) => {
@@ -463,7 +638,7 @@ formEditNote.addEventListener("submit", async (e) => {
   try {
     const response = await fetch(`${API_URL}/${currentEditingNoteId}`, {
       method: "PUT",
-      headers: { "Content-type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updateNote),
     });
     if (response.ok) {
@@ -517,6 +692,18 @@ function showNotification(message, type = "success") {
     alertElement.classList.remove("show");
     setTimeout(() => alertElement.remove(), 150);
   }, 3000);
+}
+// traemos el token guardado
+function getToken() {
+  return localStorage.getItem("jwt_token");
+}
+
+function getAuthHeaders() {
+  const token = getToken();
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
 }
 
 // refrescar para la cuenta regresiva
