@@ -78,7 +78,7 @@ async function fetchNotes() {
     }
 
     // se asigna a la variable global notes
-    notes = await response.json(); 
+    notes = await response.json();
     renderNotes();
   } catch (error) {
     console.error("Error al traer las notas:", error);
@@ -215,7 +215,8 @@ function checkAuthState() {
   if (token) {
     if (authModal) authModal.style.display = "none";
     if (userBar) userBar.style.display = "flex";
-    if (userEmailDisplay) userEmailDisplay.textContent = localStorage.getItem("user_email");
+    if (userEmailDisplay)
+      userEmailDisplay.textContent = localStorage.getItem("user_email");
     fetchNotes();
   } else {
     if (authModal) authModal.style.display = "flex";
@@ -322,17 +323,26 @@ function listenerCapsule() {
 
 function validationText() {
   inputTitle.addEventListener("input", () => {
-    btnSave.disabled = !(inputTitle.value.trim() !== "" && textArea.value.trim() !== "");
+    btnSave.disabled = !(
+      inputTitle.value.trim() !== "" && textArea.value.trim() !== ""
+    );
   });
   textArea.addEventListener("input", () => {
-    btnSave.disabled = !(inputTitle.value.trim() !== "" && textArea.value.trim() !== "");
+    btnSave.disabled = !(
+      inputTitle.value.trim() !== "" && textArea.value.trim() !== ""
+    );
   });
 }
 
 function getDestructionBadge(destructionTime) {
   if (!destructionTime) return "";
-  const diffSeconds = Math.max(0, Math.floor((destructionTime - Date.now()) / 1000));
-  const minutes = Math.floor(diffSeconds / 60).toString().padStart(2, "0");
+  const diffSeconds = Math.max(
+    0,
+    Math.floor((destructionTime - Date.now()) / 1000),
+  );
+  const minutes = Math.floor(diffSeconds / 60)
+    .toString()
+    .padStart(2, "0");
   const seconds = (diffSeconds % 60).toString().padStart(2, "0");
 
   return `<span class="badge destruction-badge">🔥 Autodestrucción en ${minutes}:${seconds}</span>`;
@@ -349,8 +359,12 @@ function renderNotes() {
 
   if (searchQuery !== "") {
     notesRender = notesRender.filter((nota) => {
-      const titleMatch = nota.title ? nota.title.toLowerCase().includes(searchQuery) : false;
-      const textMatch = nota.text ? nota.text.toLowerCase().includes(searchQuery) : false;
+      const titleMatch = nota.title
+        ? nota.title.toLowerCase().includes(searchQuery)
+        : false;
+      const textMatch = nota.text
+        ? nota.text.toLowerCase().includes(searchQuery)
+        : false;
       return titleMatch || textMatch;
     });
   }
@@ -371,7 +385,9 @@ function renderNotes() {
         const now = Date.now();
         const isLocked = validationDateCapsule && unlockTime > now;
 
-        const textToShow = isLocked ? `🔒 <b>Esta nota es para tu yo futuro.</b>` : nota.text;
+        const textToShow = isLocked
+          ? `🔒 <b>Esta nota es para tu yo futuro.</b>`
+          : nota.text;
 
         const capsuleStatusHTML = validationDateCapsule
           ? isLocked
@@ -380,7 +396,9 @@ function renderNotes() {
           : "";
 
         const hasDestruction = Boolean(nota.destruction);
-        const timeToShow = hasDestruction ? `<p class="destruction-badge">Destrucción: ${getDestructionBadge(nota.destruction)}</p>` : "";
+        const timeToShow = hasDestruction
+          ? `<p class="destruction-badge">Destrucción: ${getDestructionBadge(nota.destruction)}</p>`
+          : "";
 
         return `
           <article class="card-note" data-id="${nota.id}" style="background-color: ${nota.colorBackground || nota.color_background || "var(--btn-lemon)"};">
@@ -410,7 +428,10 @@ function renderNotes() {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const capsuleDate = capsule.checked ? timeCapsule.value : null;
-  const destructionDate = destruction.checked && timeDestruction.value ? new Date(timeDestruction.value).getTime() : null;
+  const destructionDate =
+    destruction.checked && timeDestruction.value
+      ? new Date(timeDestruction.value).getTime()
+      : null;
 
   const newNote = {
     title: inputTitle.value,
@@ -448,9 +469,12 @@ function openModal(id) {
   const targetNote = notes.find((n) => n.id == id);
   if (!targetNote) return;
 
-  const isLocked = targetNote.capsule && new Date(targetNote.capsule).getTime() > Date.now();
+  const isLocked =
+    targetNote.capsule && new Date(targetNote.capsule).getTime() > Date.now();
   if (isLocked) {
-    showNotification("🔒 Recuerda que solo se abrirá hasta que se cumpla el tiempo.");
+    showNotification(
+      "🔒 Recuerda que solo se abrirá hasta que se cumpla el tiempo.",
+    );
     return;
   }
 
@@ -536,10 +560,12 @@ function showNotification(message, type = "success") {
   }, 3000);
 }
 
-// limpiar las notas eliminadas
+// limpiar las notas autodestruidas
 function destroyExpiredNotes() {
   const now = Date.now();
-  const expiredNotes = notes.filter((nota) => nota.destruction && nota.destruction <= now);
+  const expiredNotes = notes.filter(
+    (nota) => nota.destruction && nota.destruction <= now,
+  );
 
   expiredNotes.forEach((nota) => {
     deleteNote(nota.id);
