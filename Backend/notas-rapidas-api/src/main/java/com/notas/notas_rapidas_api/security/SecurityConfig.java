@@ -29,37 +29,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Deshabilitamos CSRF (usamos JWT Stateless)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Aplicamos la política CORS segura
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        // permitir peticiones pre-flight OPTIONS del navegador
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // permitir acceso público a endpoints de autenticación
                         .requestMatchers("/api/auth/**").permitAll()
-                        // cualquier otra ruta requiere token JWT
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
-        // estee es un filtro JWT antes del filtro de autenticación por defecto
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // configuración segura de CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // solo dominios autorizados explícitos
-        configuration.setAllowedOrigins(List.of(
+        // Uso de patrones de origen para compatibilidad con credentials=true
+        configuration.setAllowedOriginPatterns(List.of(
                 "https://fasalpa.github.io",
-                "http://localhost:8080",
-                "http://localhost:5500",
-                "http://127.0.0.1:5500"
+                "http://localhost:*",
+                "http://127.0.0.1:*"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
