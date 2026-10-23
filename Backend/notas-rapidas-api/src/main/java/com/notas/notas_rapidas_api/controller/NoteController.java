@@ -1,5 +1,6 @@
 package com.notas.notas_rapidas_api.controller;
 
+import com.notas.notas_rapidas_api.dto.NoteResponse;
 import com.notas.notas_rapidas_api.model.Note;
 import com.notas.notas_rapidas_api.model.User;
 import com.notas.notas_rapidas_api.repository.NoteRepository;
@@ -40,17 +41,20 @@ public class NoteController {
 
     // Obtener notas del usuario autenticado
     @GetMapping
-    public List<Note> getUserNotes() {
+    public List<NoteResponse> getUserNotes() {
         User currentUser = getAuthenticatedUser();
-        return noteRepository.findByUserId(currentUser.getId());
+        return noteRepository.findByUserId(currentUser.getId())
+                .stream()
+                .map(NoteResponse::from)
+                .toList();
     }
 
     // Crear nota vinculada al usuario logueado
     @PostMapping
-    public Note createNote(@RequestBody Note note) {
+    public NoteResponse createNote(@RequestBody Note note) {
         User currentUser = getAuthenticatedUser();
         note.setUser(currentUser);
-        return noteService.saveNote(note);
+        return NoteResponse.from(noteService.saveNote(note));
     }
 
     // Eliminar nota verificando propiedad

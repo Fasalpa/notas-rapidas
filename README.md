@@ -90,6 +90,8 @@ La API estará disponible localmente en `http://localhost:8080/api/notes`.
 | `POST` | `/api/notes` | Crear una nueva nota |
 | `DELETE` | `/api/notes/{id}` | Eliminar una nota por ID |
 
+Las respuestas de notas incluyen solo sus campos públicos y no exponen los datos del usuario asociado.
+
 ## ✒️ Autor
 
 **Fasalpa**  
