@@ -4,6 +4,7 @@ import com.notas.notas_rapidas_api.model.Note;
 import com.notas.notas_rapidas_api.model.User;
 import com.notas.notas_rapidas_api.repository.NoteRepository;
 import com.notas.notas_rapidas_api.repository.UserRepository;
+import com.notas.notas_rapidas_api.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -20,11 +22,13 @@ public class NoteController {
 
     private final NoteRepository noteRepository;
     private final UserRepository userRepository;
+    private final NoteService noteService;
 
     @Autowired
-    public NoteController(NoteRepository noteRepository, UserRepository userRepository) {
+    public NoteController(NoteRepository noteRepository, UserRepository userRepository, NoteService noteService) {
         this.noteRepository = noteRepository;
         this.userRepository = userRepository;
+        this.noteService = noteService;
     }
 
     private User getAuthenticatedUser() {
@@ -46,12 +50,12 @@ public class NoteController {
     public Note createNote(@RequestBody Note note) {
         User currentUser = getAuthenticatedUser();
         note.setUser(currentUser);
-        return noteRepository.save(note);
+        return noteService.saveNote(note);
     }
 
     // Eliminar nota verificando propiedad
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteNote(@PathVariable Long id) {
+    public ResponseEntity<?> deleteNote(@PathVariable UUID id) {
         User currentUser = getAuthenticatedUser();
 
         return noteRepository.findById(id).map(note -> {
