@@ -43,18 +43,10 @@ public class NoteService {
             if (updatedNote.getText() != null) {
                 existingNote.setText(updatedNote.getText());
             }
-            if (updatedNote.getColorBackground() != null) {
-                existingNote.setColorBackground(updatedNote.getColorBackground());
-            }
-            if (updatedNote.getMood() != null) {
-                existingNote.setMood(updatedNote.getMood());
-            }
-            if (updatedNote.getDestruction() != null) {
-                existingNote.setDestruction(updatedNote.getDestruction());
-            }
-            if (updatedNote.getCapsule() != null) {
-                existingNote.setCapsule(updatedNote.getCapsule());
-            }
+            existingNote.setColorBackground(updatedNote.getColorBackground());
+            existingNote.setMood(updatedNote.getMood());
+            existingNote.setDestruction(updatedNote.getDestruction());
+            existingNote.setCapsule(updatedNote.getCapsule());
             return noteRepository.save(existingNote);
         });
     }

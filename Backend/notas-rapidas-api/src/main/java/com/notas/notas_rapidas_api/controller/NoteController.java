@@ -57,6 +57,24 @@ public class NoteController {
         return NoteResponse.from(noteService.saveNote(note));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateNote(@PathVariable UUID id, @RequestBody Note updatedNote) {
+        User currentUser = getAuthenticatedUser();
+        return noteRepository.findById(id).map(existingNote -> {
+            if (!existingNote.getUser().getId().equals(currentUser.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("No tienes permiso para editar esta nota.");
+            }
+            if (updatedNote.getTitle() == null || updatedNote.getText() == null) {
+                return ResponseEntity.badRequest().body("El título y el contenido es obligatorio.");
+            }
+
+            return noteService.updateNote(id, updatedNote)
+                    .<ResponseEntity<?>>map(note -> ResponseEntity.ok(NoteResponse.from(note)))
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     // Eliminar nota verificando propiedad
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteNote(@PathVariable UUID id) {
