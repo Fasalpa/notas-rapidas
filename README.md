@@ -86,6 +86,7 @@ La API estará disponible localmente en `http://localhost:8080/api/notes`.
 
 | Método | Endpoint | Descripción |
 | :--- | :--- | :--- |
+| `GET` | `/api/health` | Verificar que la API está activa (público, sin autenticación) |
 | `GET` | `/api/notes` | Obtener todas las notas |
 | `POST` | `/api/notes` | Crear una nueva nota |
 | `DELETE` | `/api/notes/{id}` | Eliminar una nota por ID |
