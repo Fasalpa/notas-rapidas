@@ -458,7 +458,7 @@ function renderNotes() {
 
         const textToShow = isLocked
           ? `🔒 <b>Esta nota es para tu yo futuro.</b>`
-          : nota.text;
+          : escapeHtml(nota.text);
 
         const capsuleStatusHTML = validationDateCapsule
           ? isLocked
@@ -474,7 +474,7 @@ function renderNotes() {
         return `
           <article class="card-note" data-id="${nota.id}" style="background-color: ${nota.colorBackground || nota.color_background || "var(--btn-lemon)"};">
             <div class="card-note-container">
-              <h5 class="card-note-title">${nota.title}</h5>
+              <h5 class="card-note-title">${escapeHtml(nota.title)}</h5>
               <button type="button" data-id="${nota.id}" class="btn-delete">🗑️</button>
             </div>
             <div class="card-container-text">
@@ -635,7 +635,7 @@ function showNotification(message, type = "success") {
   }, 3000);
 }
 
-// PURGA AUTOMÁTICA Y ACTUALIZACIÓN EN TIEMPO REAL
+// purga automatica y actualización en tieempo real
 function destroyExpiredNotes() {
   const now = Date.now();
   const expiredNotes = notes.filter(
@@ -645,6 +645,36 @@ function destroyExpiredNotes() {
   expiredNotes.forEach((nota) => {
     deleteNote(nota.id);
   });
+}
+
+//evitamos que se lea código html
+
+function escapeHtml(value) {
+  const characters = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+
+  let text = "";
+
+  if (value !== null && value !== undefined) {
+    text = String(value);
+  }
+
+  let escapedText = "";
+
+  for (const character of text) {
+    if (characters[character]) {
+      escapedText += characters[character];
+    } else {
+      escapedText += character;
+    }
+  }
+
+  return escapedText;
 }
 
 setInterval(() => {
