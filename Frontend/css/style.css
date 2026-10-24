@@ -22,6 +22,12 @@
   --bien: #4ecda6; /* Verde menta agua */
   --increible: #6fb8e8; /* Azul cielo brillante */
 }
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
 body {
   margin: 0;
   height: 100svh;
@@ -71,6 +77,21 @@ p {
     line-height: 1.1;
     margin: 0;
     height: auto;
+  }
+}
+
+#container-logout {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 10%;
+
+  #user-bar {
+    border: 1px solid var(--orange-star);
+    width: 62px ;
+    background-color: var(--cream);
+    margin-right: 15%;
+border-radius: 32px;
   }
 }
 
@@ -486,7 +507,7 @@ h4 {
     height: 32px;
     width: 90%;
   }
-  #btn-login{
+  #btn-login {
     display: flex;
     align-items: center;
     margin: 16px;
@@ -517,7 +538,7 @@ h4 {
     margin-bottom: 16px;
     width: 90%;
   }
-  #btn-register{
+  #btn-register {
     display: flex;
     align-items: center;
     color: var(--cream);
