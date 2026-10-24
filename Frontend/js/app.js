@@ -649,33 +649,7 @@ function destroyExpiredNotes() {
 
 //evitamos que se lea código html
 
-function escapeHtml(value) {
-  const characters = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;",
-  };
 
-  let text = "";
-
-  if (value !== null && value !== undefined) {
-    text = String(value);
-  }
-
-  let escapedText = "";
-
-  for (const character of text) {
-    if (characters[character]) {
-      escapedText += characters[character];
-    } else {
-      escapedText += character;
-    }
-  }
-
-  return escapedText;
-}
 
 setInterval(() => {
   destroyExpiredNotes();
