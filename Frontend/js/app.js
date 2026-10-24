@@ -177,6 +177,7 @@ function logout() {
   localStorage.removeItem("user_email");
   notes = [];
   renderNotes();
+  document.getElementById("form-login").reset();
   checkAuthState();
 }
 
