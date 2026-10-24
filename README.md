@@ -40,6 +40,8 @@ Por buenas prácticas de seguridad, ninguna credencial o contraseña está harco
 | `SPRING_DATASOURCE_USERNAME` | Usuario de la base de datos | `postgres.xxxxxx` |
 | `SPRING_DATASOURCE_PASSWORD` | Contraseña de la base de datos | `tu_contraseña_segura` |
 
+El backend también acepta `DB_URL`, `DB_USERNAME` y `DB_PASSWORD` como nombres alternativos si las variables `SPRING_DATASOURCE_*` no están definidas.
+
 ---
 
 ## 📂 Estructura del Proyecto
@@ -84,11 +86,14 @@ La API estará disponible localmente en `http://localhost:8080/api/notes`.
 
 | Método | Endpoint | Descripción |
 | :--- | :--- | :--- |
+| `GET` | `/api/health` | Verificar que la API está activa (público, sin autenticación) |
 | `GET` | `/api/notes` | Obtener todas las notas |
 | `POST` | `/api/notes` | Crear una nueva nota |
 | `DELETE` | `/api/notes/{id}` | Eliminar una nota por ID |
 
+Las respuestas de notas incluyen solo sus campos públicos y no exponen los datos del usuario asociado.
+
 ## ✒️ Autor
 
-**Robinson Fabián Salamanca Palacio**  
+**Fasalpa**  
 Desarrollador Full Stack Java y estudiante de Ingeniería de Sistemas.

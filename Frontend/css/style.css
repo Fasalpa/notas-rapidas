@@ -22,6 +22,12 @@
   --bien: #4ecda6; /* Verde menta agua */
   --increible: #6fb8e8; /* Azul cielo brillante */
 }
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
 body {
   margin: 0;
   height: 100svh;
@@ -74,6 +80,28 @@ p {
   }
 }
 
+#container-logout {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  width: 10%;
+
+  #user-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--orange-star);
+    width: 62px;
+    background-color: var(--cream);
+    margin-right: 15%;
+    border-radius: 32px;
+  }
+  #user-bar:hover {
+    background-color: var(--kumqat);
+    border-color: var(--cream);
+  }
+}
+
 /* fin de el navbar */
 section {
   display: flex;
@@ -97,6 +125,8 @@ textarea {
   width: 98%;
   border-radius: 16px;
   border: 2px solid var(--gataloupe);
+    font-family: "Glass Antiqua", cursive;
+
   padding: 0 8%;
 }
 
@@ -151,10 +181,6 @@ textarea {
   #six {
     background-color: var(--btn-sand);
     animation-delay: 360ms;
-  }
-  #seven {
-    background-color: var(--btn-peach);
-    animation-delay: 420ms;
   }
   .btn-color:hover {
     border: 2px solid var(--kumqat);
@@ -442,6 +468,7 @@ h4 {
   width: 90%;
   max-width: 400px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  font-family: "Lora", serif;
 }
 
 .auth-tabs {
@@ -473,7 +500,7 @@ h4 {
   h3 {
     margin: 13px 0 26px;
     color: var();
-    font-family: "Lora", serif;
+    font-family: "Glass Antiqua", cursive;
   }
   #login-email {
     margin-bottom: 12px;
@@ -486,11 +513,14 @@ h4 {
     height: 32px;
     width: 90%;
   }
-  #btn-login{
+  #btn-login {
     display: flex;
     align-items: center;
     margin: 16px;
     color: var(--cream);
+  }
+  #btn-login:hover {
+    color: var(--kumqat);
   }
 }
 
@@ -502,7 +532,7 @@ h4 {
   h3 {
     margin: 13px 0;
     color: var();
-    font-family: "Lora", serif;
+    font-family: "Glass Antiqua", cursive;
   }
   #register-name {
     margin-bottom: 16px;
@@ -517,7 +547,7 @@ h4 {
     margin-bottom: 16px;
     width: 90%;
   }
-  #btn-register{
+  #btn-register {
     display: flex;
     align-items: center;
     color: var(--cream);

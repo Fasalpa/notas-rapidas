@@ -43,6 +43,9 @@
               <p>De ideas temporales a realidad</p>
             </div>
           </div>
+          <div id="container-logout">
+            <button id="user-bar" onclick="logout()">👋🏻</button>
+          </div>
         </div>
       </nav>
     </header>
@@ -74,7 +77,6 @@
             <button type="button" class="btn-color rise" id="four"></button>
             <button type="button" class="btn-color rise" id="five"></button>
             <button type="button" class="btn-color rise" id="six"></button>
-            <button type="button" class="btn-color rise" id="seven"></button>
           </div>
 
           <div class="mood-slider">
@@ -218,7 +220,7 @@
     </div>
 
     <!-- formulario del login -->
-    <form id="form-login" onsubmit="handleLogin(event)">
+    <form id="form-login"">
       <h3>Te damos la bienvenida</h3>
       <input type="email" id="login-email" placeholder="Correo electrónico" required />
       <input type="password" id="login-password" placeholder="Contraseña" required />
@@ -226,7 +228,7 @@
     </form>
 
     <!-- formulario para registro -->
-    <form id="form-register" onsubmit="handleRegister(event)" style="display: none;">
+    <form id="form-register" style="display: none;">
       <h3>Crear Cuenta</h3>
       <input type="text" id="register-name" placeholder="Nombre completo" required />
       <input type="email" id="register-email" placeholder="Correo electrónico" required />

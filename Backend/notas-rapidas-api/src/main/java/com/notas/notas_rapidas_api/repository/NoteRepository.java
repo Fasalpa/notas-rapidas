@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface NoteRepository extends JpaRepository<Note, Long> {
+public interface NoteRepository extends JpaRepository<Note, UUID> {
 
     @Query("SELECT n FROM Note n WHERE n.destruction IS NULL OR n.destruction > :now")
     List<Note> findAllActiveNotes(@Param("now") Long now);

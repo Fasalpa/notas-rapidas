@@ -31,7 +31,7 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     // Endpoint de registro
-    @PostMapping("/ ")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest authRequest) {
         if (userRepository.existsByEmail(authRequest.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -39,10 +39,11 @@ public class AuthController {
         }
 
         User user = new User(
+                authRequest.getName(),
                 authRequest.getEmail(),
-                passwordEncoder.encode(authRequest.getPassword()),
-                authRequest.getName()
+                passwordEncoder.encode(authRequest.getPassword())
         );
+        user.setName(authRequest.getName());
 
         // Guardar el nuevo usuario en Supabase
         userRepository.save(user);

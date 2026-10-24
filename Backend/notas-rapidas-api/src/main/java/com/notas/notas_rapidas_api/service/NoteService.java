@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class NoteService {
@@ -22,21 +23,19 @@ public class NoteService {
         return noteRepository.findAllActiveNotes(System.currentTimeMillis());
     }
 
-    // Cambiado UUID por Long
-    public Optional<Note> getNoteById(Long id) {
+    public Optional<Note> getNoteById(UUID id) {
         return noteRepository.findById(id);
     }
 
     public Note saveNote(Note note) {
-        // En Long no se asigna UUID.randomUUID(), la BD se encarga de asignar el ID autoincrementable.
         if (note.getDate() == null) {
             note.setDate(System.currentTimeMillis());
         }
         return noteRepository.save(note);
     }
 
-    // Método de actualización para PUT (Cambiado UUID por Long)
-    public Optional<Note> updateNote(Long id, Note updatedNote) {
+    // Método de actualización para PUT
+    public Optional<Note> updateNote(UUID id, Note updatedNote) {
         return noteRepository.findById(id).map(existingNote -> {
             if (updatedNote.getTitle() != null) {
                 existingNote.setTitle(updatedNote.getTitle());
@@ -44,24 +43,15 @@ public class NoteService {
             if (updatedNote.getText() != null) {
                 existingNote.setText(updatedNote.getText());
             }
-            if (updatedNote.getColorBackground() != null) {
-                existingNote.setColorBackground(updatedNote.getColorBackground());
-            }
-            if (updatedNote.getMood() != null) {
-                existingNote.setMood(updatedNote.getMood());
-            }
-            if (updatedNote.getDestruction() != null) {
-                existingNote.setDestruction(updatedNote.getDestruction());
-            }
-            if (updatedNote.getCapsule() != null) {
-                existingNote.setCapsule(updatedNote.getCapsule());
-            }
+            existingNote.setColorBackground(updatedNote.getColorBackground());
+            existingNote.setMood(updatedNote.getMood());
+            existingNote.setDestruction(updatedNote.getDestruction());
+            existingNote.setCapsule(updatedNote.getCapsule());
             return noteRepository.save(existingNote);
         });
     }
 
-    // Cambiado UUID por Long
-    public void deleteNote(Long id) {
+    public void deleteNote(UUID id) {
         noteRepository.deleteById(id);
     }
 

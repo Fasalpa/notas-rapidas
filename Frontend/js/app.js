@@ -17,7 +17,7 @@ const containerNotes = document.querySelector(".container-notes");
 const search = document.getElementById("input-search");
 const btnFilter = document.querySelectorAll(".btn-filter");
 
-// modal
+// Modal de edición de notas
 const modalNote = document.getElementById("modal-note");
 const btnCloseModal = document.getElementById("btn-close-modal");
 const btnCancelEdit = document.getElementById("btn-cancel-edit");
@@ -26,7 +26,7 @@ const editTitle = document.getElementById("edit-title");
 const editText = document.getElementById("edit-text");
 const editDate = document.getElementById("edit-date");
 
-// mensajes
+// Contenedor de notificaciones toast
 let container = document.getElementById("toast-container");
 
 let notes = [];
@@ -36,17 +36,33 @@ let filter = "";
 let currentEditingNoteId = null;
 let searchQuery = "";
 
-// inicialización de la app
+// INICIALIZACIÓN PRINCIPAL DE LA APLICACIÓN
 document.addEventListener("DOMContentLoaded", () => {
+  // Listeners para los formularios de autenticación
+  const formLogin = document.getElementById("form-login");
+  const formRegister = document.getElementById("form-register");
+
+  if (formLogin) {
+    formLogin.addEventListener("submit", handleLogin);
+  }
+
+  if (formRegister) {
+    formRegister.addEventListener("submit", handleRegister);
+  }
+
+  // Inicializar componentes UI de creación y filtros
   colorBtnNote();
   listenerDestruction();
   listenerCapsule();
   validationText();
   filterBtn();
+
+  // Verificar si hay sesión activa para mostrar u ocultar el modal
   checkAuthState();
 });
 
-// helper de Tokens
+// GESTIÓN DE TOKENS JWT
+
 function getToken() {
   return localStorage.getItem("jwt_token");
 }
@@ -59,103 +75,57 @@ function getAuthHeaders() {
   };
 }
 
-// logica del http con el back /render +jwt
+// LÓGICA DE AUTENTICACIÓN (LOGIN, REGISTRO, LOGOUT)
 
-// obtener notas
-async function fetchNotes() {
-  const token = getToken();
-  if (!token) return;
+function switchTab(tab) {
+  const formLogin = document.getElementById("form-login");
+  const formRegister = document.getElementById("form-register");
+  const tabLogin = document.getElementById("tab-login");
+  const tabRegister = document.getElementById("tab-register");
+  const errorMsg = document.getElementById("auth-error");
 
-  try {
-    const response = await fetch(API_NOTES, {
-      method: "GET",
-      headers: getAuthHeaders(),
-    });
+  if (errorMsg) errorMsg.style.display = "none";
 
-    if (response.status === 401 || response.status === 403) {
-      logout();
-      return;
-    }
-
-    // se asigna a la variable global notes
-    notes = await response.json();
-    renderNotes();
-  } catch (error) {
-    console.error("Error al traer las notas:", error);
+  if (tab === "login") {
+    if (formLogin) formLogin.style.display = "flex";
+    if (formRegister) formRegister.style.display = "none";
+    if (tabLogin) tabLogin.classList.add("active");
+    if (tabRegister) tabRegister.classList.remove("active");
+  } else {
+    if (formLogin) formLogin.style.display = "none";
+    if (formRegister) formRegister.style.display = "flex";
+    if (tabRegister) tabRegister.classList.add("active");
+    if (tabLogin) tabLogin.classList.remove("active");
   }
 }
+window.switchTab = switchTab; // Disponible globalmente para los onclick
 
-// crear la nota
-async function createNote(noteData) {
-  try {
-    const response = await fetch(API_NOTES, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(noteData),
-    });
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
 
-    if (response.ok) {
-      await fetchNotes();
-
-      const textoOriginal = btnSave.textContent;
-      btnSave.textContent = "Guardada!";
-      btnSave.classList.add("saved");
-
-      setTimeout(() => {
-        btnSave.textContent = textoOriginal;
-        btnSave.classList.remove("saved");
-        resetValues();
-      }, 2000);
-      showNotification("✨ ¡Nota guardada con éxito!", "success");
-    } else {
-      showNotification("Error al guardar la nota.", "error");
-    }
-  } catch (error) {
-    console.error("Error al crear la nota: ", error);
+  if (!email || !password) {
+    showAuthError("Por favor ingresa tu correo y contraseña.");
+    return;
   }
+
+  await login(email, password);
 }
 
-// eliminar nota
-async function deleteNote(id) {
-  try {
-    const response = await fetch(`${API_NOTES}/${id}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-    });
+async function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById("register-name").value;
+  const email = document.getElementById("register-email").value;
+  const password = document.getElementById("register-password").value;
 
-    if (response.ok) {
-      await fetchNotes();
-      showNotification("💥 Nota eliminada con éxito.");
-    } else {
-      console.error("No se pudo eliminar la nota. Status:", response.status);
-    }
-  } catch (error) {
-    console.error("Error al eliminar la nota:", error);
+  if (!name || !email || !password) {
+    showAuthError("Por favor completa todos los campos del registro.");
+    return;
   }
+
+  await register(name, email, password);
 }
-
-// editar nota (PUT)
-async function updateNote(id, updatedData) {
-  try {
-    const response = await fetch(`${API_NOTES}/${id}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(updatedData),
-    });
-
-    if (response.ok) {
-      await fetchNotes();
-      closeModal();
-      showNotification("✏️ Se ha editado con éxito.");
-    } else {
-      console.error("Error al actualizar la nota. Status:", response.status);
-    }
-  } catch (error) {
-    console.error("Error en la petición PUT de edición:", error);
-  }
-}
-
-// logica de la autenticacion- login, regisstro y logout
 
 async function login(email, password) {
   try {
@@ -165,7 +135,9 @@ async function login(email, password) {
       body: JSON.stringify({ email, password }),
     });
 
-    if (!response.ok) throw new Error("Credenciales incorrectas");
+    if (!response.ok) {
+      throw new Error("Credenciales incorrectas");
+    }
 
     const data = await response.json();
     localStorage.setItem("jwt_token", data.token);
@@ -196,13 +168,16 @@ async function register(name, email, password) {
 
     checkAuthState();
   } catch (error) {
-    showAuthError(error.message || "Error al registrar el usuario.");
+    showAuthError(error.message || "Error al registrar la cuenta.");
   }
 }
 
 function logout() {
   localStorage.removeItem("jwt_token");
   localStorage.removeItem("user_email");
+  notes = [];
+  renderNotes();
+  document.getElementById("form-login").reset();
   checkAuthState();
 }
 
@@ -232,7 +207,103 @@ function showAuthError(msg) {
   }
 }
 
-// manipulamos el DOM
+// PETICIONES HTTP A SPRING BOOT (NOTAS)
+
+async function fetchNotes() {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const response = await fetch(API_NOTES, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      logout();
+      return;
+    }
+
+    if (!response.ok) {
+      console.error("Respuesta no válida del servidor:", response.status);
+      return;
+    }
+
+    notes = await response.json();
+    renderNotes();
+  } catch (error) {
+    console.error("Error al traer las notas:", error);
+  }
+}
+
+async function createNote(noteData) {
+  try {
+    const response = await fetch(API_NOTES, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(noteData),
+    });
+
+    if (response.ok) {
+      await fetchNotes();
+
+      const textoOriginal = btnSave.textContent;
+      btnSave.textContent = "Guardada!";
+      btnSave.classList.add("saved");
+
+      setTimeout(() => {
+        btnSave.textContent = textoOriginal;
+        btnSave.classList.remove("saved");
+        resetValues();
+      }, 2000);
+      showNotification("✨ ¡Nota guardada con éxito!", "success");
+    } else {
+      showNotification("Error al guardar la nota.", "error");
+    }
+  } catch (error) {
+    console.error("Error al crear la nota: ", error);
+  }
+}
+
+async function deleteNote(id) {
+  try {
+    const response = await fetch(`${API_NOTES}/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+
+    if (response.ok) {
+      await fetchNotes();
+      showNotification("💥 Mensaje eliminado con éxito.");
+    } else {
+      console.error("No se pudo eliminar la nota. Status:", response.status);
+    }
+  } catch (error) {
+    console.error("Error al eliminar la nota:", error);
+  }
+}
+
+async function updateNote(id, updatedData) {
+  try {
+    const response = await fetch(`${API_NOTES}/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.ok) {
+      await fetchNotes();
+      closeModal();
+      showNotification("✏️ Se ha editado con éxito.");
+    } else {
+      console.error("Error al actualizar la nota. Status:", response.status);
+    }
+  } catch (error) {
+    console.error("Error en la petición PUT de edición:", error);
+  }
+}
+
+// MANIPULACIÓN DEL DOM Y EVENTOS DE CREACIÓN / FILTROS
 
 function colorBtnNote() {
   colors.forEach((c) => {
@@ -387,7 +458,7 @@ function renderNotes() {
 
         const textToShow = isLocked
           ? `🔒 <b>Esta nota es para tu yo futuro.</b>`
-          : nota.text;
+          : escapeHtml(nota.text);
 
         const capsuleStatusHTML = validationDateCapsule
           ? isLocked
@@ -403,7 +474,7 @@ function renderNotes() {
         return `
           <article class="card-note" data-id="${nota.id}" style="background-color: ${nota.colorBackground || nota.color_background || "var(--btn-lemon)"};">
             <div class="card-note-container">
-              <h5 class="card-note-title">${nota.title}</h5>
+              <h5 class="card-note-title">${escapeHtml(nota.title)}</h5>
               <button type="button" data-id="${nota.id}" class="btn-delete">🗑️</button>
             </div>
             <div class="card-container-text">
@@ -424,7 +495,7 @@ function renderNotes() {
   }
 }
 
-// formulario de creación
+// FORMULARIO DE CREACIÓN DE NOTA
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const capsuleDate = capsule.checked ? timeCapsule.value : null;
@@ -445,7 +516,7 @@ form.addEventListener("submit", async (e) => {
   await createNote(newNote);
 });
 
-// editar las cards y eeliminarlas
+// CLIC EN CARDS (ELIMINAR / EDITAR)
 containerNotes.addEventListener("click", async (e) => {
   const btnDelete = e.target.closest(".btn-delete");
 
@@ -464,7 +535,7 @@ containerNotes.addEventListener("click", async (e) => {
   }
 });
 
-// modal desplegado de editar
+// MODAL DE EDICIÓN DE NOTAS
 function openModal(id) {
   const targetNote = notes.find((n) => n.id == id);
   if (!targetNote) return;
@@ -491,33 +562,37 @@ function closeModal() {
   currentEditingNoteId = null;
 }
 
-btnCloseModal.addEventListener("click", closeModal);
-btnCancelEdit.addEventListener("click", closeModal);
+if (btnCloseModal) btnCloseModal.addEventListener("click", closeModal);
+if (btnCancelEdit) btnCancelEdit.addEventListener("click", closeModal);
 
-modalNote.addEventListener("click", (e) => {
-  if (e.target === modalNote) closeModal();
-});
+if (modalNote) {
+  modalNote.addEventListener("click", (e) => {
+    if (e.target === modalNote) closeModal();
+  });
+}
 
-formEditNote.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (!currentEditingNoteId) return;
+if (formEditNote) {
+  formEditNote.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!currentEditingNoteId) return;
 
-  const targetNote = notes.find((n) => n.id == currentEditingNoteId);
-  if (!targetNote) return;
+    const targetNote = notes.find((n) => n.id == currentEditingNoteId);
+    if (!targetNote) return;
 
-  const updatedNote = {
-    id: currentEditingNoteId,
-    title: editTitle.value,
-    text: editText.value,
-    colorBackground: targetNote.colorBackground,
-    mood: targetNote.mood,
-    destruction: targetNote.destruction,
-    capsule: targetNote.capsule,
-    date: targetNote.date,
-  };
+    const updatedNote = {
+      id: currentEditingNoteId,
+      title: editTitle.value,
+      text: editText.value,
+      colorBackground: targetNote.colorBackground,
+      mood: targetNote.mood,
+      destruction: targetNote.destruction,
+      capsule: targetNote.capsule,
+      date: targetNote.date,
+    };
 
-  await updateNote(currentEditingNoteId, updatedNote);
-});
+    await updateNote(currentEditingNoteId, updatedNote);
+  });
+}
 
 function resetValues() {
   inputTitle.value = "";
@@ -560,7 +635,7 @@ function showNotification(message, type = "success") {
   }, 3000);
 }
 
-// limpiar las notas autodestruidas
+// purga automatica y actualización en tieempo real
 function destroyExpiredNotes() {
   const now = Date.now();
   const expiredNotes = notes.filter(
@@ -570,6 +645,36 @@ function destroyExpiredNotes() {
   expiredNotes.forEach((nota) => {
     deleteNote(nota.id);
   });
+}
+
+//evitamos que se lea código html
+
+function escapeHtml(value) {
+  const characters = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+
+  let text = "";
+
+  if (value !== null && value !== undefined) {
+    text = String(value);
+  }
+
+  let escapedText = "";
+
+  for (const character of text) {
+    if (characters[character]) {
+      escapedText += characters[character];
+    } else {
+      escapedText += character;
+    }
+  }
+
+  return escapedText;
 }
 
 setInterval(() => {
